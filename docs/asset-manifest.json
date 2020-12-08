@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/starmourn-ship-builder/static/css/main.5ba3632c.chunk.css",
+    "main.js": "/starmourn-ship-builder/static/js/main.8e731c8c.chunk.js",
+    "main.js.map": "/starmourn-ship-builder/static/js/main.8e731c8c.chunk.js.map",
+    "runtime-main.js": "/starmourn-ship-builder/static/js/runtime-main.0b34b15d.js",
+    "runtime-main.js.map": "/starmourn-ship-builder/static/js/runtime-main.0b34b15d.js.map",
+    "static/js/2.99de0438.chunk.js": "/starmourn-ship-builder/static/js/2.99de0438.chunk.js",
+    "static/js/2.99de0438.chunk.js.map": "/starmourn-ship-builder/static/js/2.99de0438.chunk.js.map",
+    "static/js/3.0ba69572.chunk.js": "/starmourn-ship-builder/static/js/3.0ba69572.chunk.js",
+    "static/js/3.0ba69572.chunk.js.map": "/starmourn-ship-builder/static/js/3.0ba69572.chunk.js.map",
+    "index.html": "/starmourn-ship-builder/index.html",
+    "static/css/main.5ba3632c.chunk.css.map": "/starmourn-ship-builder/static/css/main.5ba3632c.chunk.css.map",
+    "static/js/2.99de0438.chunk.js.LICENSE.txt": "/starmourn-ship-builder/static/js/2.99de0438.chunk.js.LICENSE.txt",
+    "static/media/logo.6ce24c58.svg": "/starmourn-ship-builder/static/media/logo.6ce24c58.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0b34b15d.js",
+    "static/js/2.99de0438.chunk.js",
+    "static/css/main.5ba3632c.chunk.css",
+    "static/js/main.8e731c8c.chunk.js"
+  ]
+}
