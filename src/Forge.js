@@ -115,16 +115,27 @@ const WEAPONS_STRING = `4,Cannon I,Small,Batters other ships with a blast of ene
 
 const weaponFromLine = (line) => {
     const elements = line.split(',');
+    const weapon_type = elements[4];
+    const firing_speed = parseKilo(elements[5]);
+    const reload_speed = parseKilo(elements[6]);
+    const weapon_damage = parseKilo(elements[7]);
+    let dps = 0;
+    if (weapon_type === 'Missile') {
+	dps = weapon_damage / reload_speed;
+    } else if (weapon_type === 'Cannon') {
+	dps = weapon_damage / firing_speed;
+    }
     return {
 	id: elements[0],
 	name: elements[1],
 	size: elements[2].toLowerCase(),
 	description: elements[3],
-	weapon_type: elements[4],
-	firing_speed: parseKilo(elements[5]),
-	reload_speed: parseKilo(elements[6]),
-	weapon_damage: parseKilo(elements[7]),
+	weapon_type,
+	firing_speed,
+	reload_speed,
+	weapon_damage,
 	optimal_range: parseInt(elements[8]),
+	dps,
 	fall_off: parseKilo(elements[9]),
 	mass: parseKilo(elements[10]),
 	power: parseKilo(elements[11]),
@@ -391,26 +402,39 @@ export const getWeapons = (superstructureId, moduleIds) => {
     };
 };
 
+const isEnabled = ({ disabled }) => !disabled;
 const sumPower = (acc, weapon) => acc + weapon.power;
 const sumCycles = (acc, weapon) => acc + weapon.cycles;
 const sumPrice = (acc, item) => acc + item.price;
+const sumDps = (acc, item) => acc + item.dps;
 
 export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, shipsim, weapons, modules }) => {
     const massUsed = superstructure.mass + capacitor.mass + shield.mass + sensor.mass + engine.mass + shipsim.mass;
     
     const thrustRatio = engine.thrust / massUsed;
+
+    const weaponsEnabled = [
+	...weapons.small.filter(isEnabled),
+	...weapons.medium.filter(isEnabled),
+	...weapons.large.filter(isEnabled),
+    ];
+    const modulesEnabled = [
+	...modules.small.filter(isEnabled),
+	...modules.medium.filter(isEnabled),
+	...modules.large.filter(isEnabled),
+    ];
     
     const maxPower = superstructure.power;
-    console.log(weapons, modules);
-    const weaponPower = weapons.small.reduce(sumPower, 0) + weapons.medium.reduce(sumPower, 0) + weapons.large.reduce(sumPower, 0);
-    const modulePower = modules.small.reduce(sumPower, 0) + modules.medium.reduce(sumPower, 0) + modules.large.reduce(sumPower, 0);
+    const weaponPower = weaponsEnabled.reduce(sumPower, 0);
+    const modulePower = modulesEnabled.reduce(sumPower, 0);;
+    const dps = weaponsEnabled.reduce(sumDps, 0);
     
     const powerUsed = capacitor.power + shield.power + sensor.power + engine.power + shipsim.power + weaponPower + modulePower;
     const powerLeft = maxPower - powerUsed;
 
     const maxCycles = shipsim.cycles;
-    const weaponCycles = weapons.small.reduce(sumCycles, 0) + weapons.medium.reduce(sumCycles, 0) + weapons.large.reduce(sumCycles, 0);
-    const moduleCycles  = modules.small.reduce(sumCycles, 0) + modules.medium.reduce(sumCycles, 0) + modules.large.reduce(sumCycles, 0);
+    const weaponCycles = weaponsEnabled.reduce(sumCycles, 0);
+    const moduleCycles  = modulesEnabled.reduce(sumCycles, 0);
     const cyclesLeft = maxCycles - weaponCycles - moduleCycles;
 
     const totalPrice = [
@@ -432,6 +456,7 @@ export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, s
 	massUsed,
 	maxPower,
 	powerLeft,
+	dps,
 	thrustRatio,
 	maxCycles,
 	cyclesLeft,

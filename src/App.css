@@ -1,17 +1,93 @@
+body {
+    background-color: #0c0c0c;
+}
+
 .App {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-gap: 8px;
+}
+
+select, option {
+    background-color: #3d3d3d;
+    color: #edab04;
 }
 
 .superstructures {
-    height: 40px;
-    overflow-y: scroll;
-    display: flex;
-    flex-direction: column;
-}
-
-.superstructure {
-    width: 100%;
+    line-height: 24px;
     display: flex;
     flex-direction: row;
+}
+
+.superstructures > :nth-child(1) {
+}
+
+.superstructures > :nth-child(2) {
+    margin-right: auto;
+}
+
+.superstructures > :nth-child(3) {
+    margin-left: auto;
+}
+
+.superstructures > :nth-child(4) {
+}
+
+.capacitors,
+.engines,
+.shields,
+.shipsims,
+.sensors {
+    line-height: 18px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 400px;
+    justify-self: center;
+}
+
+.label,
+.none_label,
+.power,
+.cycles,
+.mass,
+.thrust,
+.dps,
+.price {
+    color: #edab04;
+    text-transform: capitalize;
+    margin: 4px;
+}
+
+.none_label {
+    text-align: center;
+    width: 100%;
+}
+
+.weapons_small,
+.weapons_medium,
+.weapons_large,
+.modules_small,
+.modules_medium,
+.modules_large {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 4px;
+    border: 1px solid #edab04;
+    min-height: 32px;
+    line-height: 32px;
+}
+
+.weapons_small select,
+.weapons_medium select,
+.weapons_large select,
+.modules_small select,
+.modules_medium select,
+.modules_large select {
+    height: 32px;
+}
+
+.ship {
+    display: flex;
 }
