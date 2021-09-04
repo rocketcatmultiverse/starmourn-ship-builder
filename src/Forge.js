@@ -41,7 +41,6 @@ const parseKilo = value => {
 
 const superstructureFromLine = (line) => {
 	const elements = line.split(',');
-	console.log(elements);
 	return {
 		id: elements[0],
 		make: elements[1],
@@ -376,10 +375,8 @@ export const getComponent = (superstructureId, masterList, componentId) => {
 		.filter(component => component.ss_type === ss_type);
 	sublist.sort((a, b) => a.price - b.price);
 	let value = componentId;
-	console.log(componentId, sublist);
 	if (!sublist.find(component => component.id === componentId)) {
 		value = sublist[0].id;
-		console.log(componentId, sublist);
 	}
 	return masterList.find(component => component.id === value);
 };
@@ -388,7 +385,6 @@ const getModulesFromList = (masterList, count, moduleIds) => {
 	const modules = [];
 	for (let i = 0; i < count; i++) {
 		if (moduleIds[i] && moduleIds[i].id) {
-			console.log(moduleIds, i);
 			const module = masterList.find(module => module.id === moduleIds[i].id);
 			modules.push({
 				...moduleIds[i],
@@ -438,8 +434,6 @@ export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, s
 	const weaponCycles = weaponsEnabled.reduce(sumCycles, 0);
 	const moduleCycles = modulesEnabled.reduce(sumCycles, 0);
 	const cyclesLeft = maxCycles - weaponCycles - moduleCycles;
-
-	console.log(weapons, weaponPoints, modulePoints, superstructure);
 
 	const totalPrice = [
 		superstructure,

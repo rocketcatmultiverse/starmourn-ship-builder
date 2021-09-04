@@ -96,7 +96,7 @@ const ComponentSelection = ({ selected, setSelected, masterList, ss_type, comp_n
 	return (
 		<div className={comp_name}>
 			<Label text={comp_name} />
-			<select className={`${comp_name}__select`} defaultValue={value} onChange={(evt) => console.log(evt.target.value) || setSelected(evt.target.value)}>
+			<select className={`${comp_name}__select`} defaultValue={value} onChange={(evt) => setSelected(evt.target.value)}>
 				{sublist.map(comp_type)}
 			</select>
 		</div>
@@ -123,7 +123,20 @@ const AmmoCheck = ({ value, setValue }) => {
 
 const ModuleSelection = ({ selected, setSelected, masterList, weapon }) => {
 	const sublist = [...masterList];
-	sublist.sort((a, b) => a.price - b.price);
+	sublist.sort((a, b) => {
+		if (a.size_points > b.size_points) {
+			return 1;
+		} else if (a.size_points < b.size_points) {
+			return -1;
+		} else if (a.price > b.price) {
+			return 1;
+		} else if (a.price < b.price) {
+			return -1;
+		} else {
+			return 0;
+		}
+	});
+	console.log(sublist, masterList);
 	return (
 		<div>
 			<select value={selected && selected.id} onChange={(evt) => setSelected({
@@ -133,10 +146,10 @@ const ModuleSelection = ({ selected, setSelected, masterList, weapon }) => {
 			})}>
 				<option value="">None</option>
 				{sublist.map(module => (<option value={module.id}>
-					{module.id} - {module.name}
+					({module.size_points}) {module.id} - {module.name}
 				</option>))}
 			</select>
-			{weapon && selected && selected.id && <ActivatedCheck value={!selected.disabled} setValue={activated => console.log(activated, selected) || setSelected({
+			{weapon && selected && selected.id && <ActivatedCheck value={!selected.disabled} setValue={activated => setSelected({
 				...selected,
 				disabled: !activated,
 			})} />}
@@ -162,7 +175,6 @@ const ModuleList = ({ selected, setSelected, masterList, points, pointsUsed, nam
 		} else {
 			updated.splice(idx, 1);
 		}
-		console.log(selected, updated);
 		setSelected(updated);
 	};
 	const list = [];
@@ -174,7 +186,6 @@ const ModuleList = ({ selected, setSelected, masterList, points, pointsUsed, nam
 			weapon: name === 'weapons',
 		});
 	}
-	console.log(selected, list);
 	return (<div className={`${name}`}>
 		{list.map((item, idx) => (<ModuleSelection
 			{...item}
@@ -189,7 +200,7 @@ const ModulesSelection = ({ selected, setSelected, masterList, superstructure, n
 	return (
 		<div className={name}>
 			<Label text={`${name}: ${pointsUsed}/${counts.points}`} />
-			<ModuleList selected={selected} setSelected={setSelected} masterList={masterList} points={counts.points} pointsUsed={pointsUsed} name={name} />
+			<ModuleList selected={selected} setSelected={setSelected} masterList={masterList.filter(({ size_points }) => size_points <= counts.points)} points={counts.points} pointsUsed={pointsUsed} name={name} />
 		</div>
 	);
 };
