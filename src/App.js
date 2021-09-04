@@ -136,7 +136,6 @@ const ModuleSelection = ({ selected, setSelected, masterList, weapon }) => {
 			return 0;
 		}
 	});
-	console.log(sublist, masterList);
 	return (
 		<div>
 			<select value={selected && selected.id} onChange={(evt) => setSelected({

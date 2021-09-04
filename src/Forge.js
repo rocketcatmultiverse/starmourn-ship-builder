@@ -381,9 +381,9 @@ export const getComponent = (superstructureId, masterList, componentId) => {
 	return masterList.find(component => component.id === value);
 };
 
-const getModulesFromList = (masterList, count, moduleIds) => {
+const getModulesFromList = (masterList, moduleIds) => {
 	const modules = [];
-	for (let i = 0; i < count; i++) {
+	for (let i = 0; i < moduleIds.length; i++) {
 		if (moduleIds[i] && moduleIds[i].id) {
 			const module = masterList.find(module => module.id === moduleIds[i].id);
 			modules.push({
@@ -397,12 +397,12 @@ const getModulesFromList = (masterList, count, moduleIds) => {
 
 export const getModules = (superstructureId, moduleIds) => {
 	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId);
-	return getModulesFromList(MODULES, superstructure.modules, moduleIds);
+	return getModulesFromList(MODULES, moduleIds);
 };
 
 export const getWeapons = (superstructureId, moduleIds) => {
 	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId);
-	return getModulesFromList(WEAPONS, superstructure.weapons, moduleIds);
+	return getModulesFromList(WEAPONS, moduleIds);
 };
 
 export const getPointsUsed = (selected, masterList) =>
