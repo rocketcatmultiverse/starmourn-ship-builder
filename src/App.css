@@ -57,6 +57,10 @@ select, option {
     text-transform: capitalize;
     margin: 4px;
 }
+.over_modules,
+.over_weapons {
+    color: #f20c3d;
+}
 
 .none_label {
     text-align: center;
@@ -90,4 +94,5 @@ select, option {
 
 .ship {
     display: flex;
+    flex-direction: column;
 }

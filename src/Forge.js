@@ -29,43 +29,45 @@ const SUPERSTRUCTURES_STRING = `20,Akari Yards,Corsair,Interceptor,7,1400,704,0.
 1,Ixodon Industries,Singularity,Battleship,99,63500,28.74k,4.32s,55.00k,15.49k,20,1,2,5,1,3,3,247894`;
 
 const parseKilo = value => {
-    if (value.endsWith('k')) {
-	return Math.round(1000 * parseFloat(value.substr(0, value.length - 1)));
-    } else if (value.endsWith('s')) {
-	return parseFloat(value.substr(0, value.length - 1));
-    } else if (value.endsWith('%')) {
-	return parseFloat(value.substr(0, value.length - 1)) / 100;
-    }
-    return parseFloat(value);
+	if (value.endsWith('k')) {
+		return Math.round(1000 * parseFloat(value.substr(0, value.length - 1)));
+	} else if (value.endsWith('s')) {
+		return parseFloat(value.substr(0, value.length - 1));
+	} else if (value.endsWith('%')) {
+		return parseFloat(value.substr(0, value.length - 1)) / 100;
+	}
+	return parseFloat(value);
 };
 
 const superstructureFromLine = (line) => {
-    const elements = line.split(',');
-    console.log(elements);
-    return {
-	id: elements[0],
-	make: elements[1],
-	model: elements[2],
-	ss_type: elements[3],
-	size: parseInt(elements[4]),
-	mass: parseInt(elements[5]),
-	strength: parseKilo(elements[6]),
-	turn_time: parseKilo(elements[7]),
-	power: parseKilo(elements[8]),
-	capacity: parseKilo(elements[9]),
-	refit_capacity: parseInt(elements[10]),
-	weapons: {
-	    small: parseInt(elements[11]),
-	    medium: parseInt(elements[12]),
-	    large: parseInt(elements[13]),
-	},
-	modules: {
-	    small: parseInt(elements[14]),
-	    medium: parseInt(elements[15]),
-	    large: parseInt(elements[16]),
-	},
-	price: parseInt(elements[17]),
-    };
+	const elements = line.split(',');
+	console.log(elements);
+	return {
+		id: elements[0],
+		make: elements[1],
+		model: elements[2],
+		ss_type: elements[3],
+		size: parseInt(elements[4]),
+		mass: parseInt(elements[5]),
+		strength: parseKilo(elements[6]),
+		turn_time: parseKilo(elements[7]),
+		power: parseKilo(elements[8]),
+		capacity: parseKilo(elements[9]),
+		refit_capacity: parseInt(elements[10]),
+		weapons: {
+			small: parseInt(elements[11]),
+			medium: parseInt(elements[12]),
+			large: parseInt(elements[13]),
+			points: parseInt(elements[11]) * 5 + parseInt(elements[12]) * 10 + parseInt(elements[13]) * 15
+		},
+		modules: {
+			small: parseInt(elements[14]),
+			medium: parseInt(elements[15]),
+			large: parseInt(elements[16]),
+			points: parseInt(elements[14]) * 5 + parseInt(elements[15]) * 10 + parseInt(elements[16]) * 15
+		},
+		price: parseInt(elements[17]),
+	};
 };
 
 export const SUPERSTRUCTURES = SUPERSTRUCTURES_STRING.split('\n').map(superstructureFromLine);
@@ -77,22 +79,29 @@ const MODULES_STRING = `23,Augmented Engine I,Small,Improved reverse thrust allo
 41,Cargo Hold II,Medium,Improved cargo capacity allows for extra cargo space.,150 extra cargo space,0,300,0,75000
 42,Cargo Hold III,Large,Improved cargo capacity allows for extra cargo space.,200 extra cargo space,0,500,0,11000
 20,Damage Boost +20%,Small,Improves damage of a linked weapon by 20%.,20.00% damage,0,100,0,50000
-26,Refitter,Medium,Increase ship refit capacity.,2 extra refit space,0,200,0,50000
-22,Skipdrive I,Small,Skipdrives allow increase wormhole generation.,A skip drive,0,100,0,10000`;
+26,Refitter,Medium,Increase ship refit capacity.,2 extra refit space,0,200,0,50000`;
 
 const moduleFromLine = (line) => {
-    const elements = line.split(',');
-    return {
-	id: elements[0],
-	name: elements[1],
-	size: elements[2].toLowerCase(),
-	description: elements[3],
-	effect: elements[4],
-	mass: parseKilo(elements[5]),
-	power: parseKilo(elements[6]),
-	cycles: parseKilo(elements[7]),
-	price: parseInt(elements[8]),
-    };
+	const elements = line.split(',');
+	const size = elements[2].toLowerCase();
+	let size_points = 5;
+	if (size === "medium") {
+		size_points = 10;
+	} else if (size === "large") {
+		size_points = 15;
+	}
+	return {
+		id: elements[0],
+		name: elements[1],
+		size: elements[2].toLowerCase(),
+		size_points,
+		description: elements[3],
+		effect: elements[4],
+		mass: parseKilo(elements[5]),
+		power: parseKilo(elements[6]),
+		cycles: parseKilo(elements[7]),
+		price: parseInt(elements[8]),
+	};
 };
 
 export const MODULES = MODULES_STRING.split('\n').map(moduleFromLine);
@@ -114,34 +123,42 @@ const WEAPONS_STRING = `4,Cannon I,Small,Batters other ships with a blast of ene
 21,Tractor Beam,Medium,Stops asteroids.,Tractor,8,0,1.50k,8,30%,0,300,2.50k,6000`;
 
 const weaponFromLine = (line) => {
-    const elements = line.split(',');
-    const weapon_type = elements[4];
-    const firing_speed = parseKilo(elements[5]);
-    const reload_speed = parseKilo(elements[6]);
-    const weapon_damage = parseKilo(elements[7]);
-    let dps = 0;
-    if (weapon_type === 'Missile') {
-	dps = weapon_damage / reload_speed;
-    } else if (weapon_type === 'Cannon') {
-	dps = weapon_damage / firing_speed;
-    }
-    return {
-	id: elements[0],
-	name: elements[1],
-	size: elements[2].toLowerCase(),
-	description: elements[3],
-	weapon_type,
-	firing_speed,
-	reload_speed,
-	weapon_damage,
-	optimal_range: parseInt(elements[8]),
-	dps,
-	fall_off: parseKilo(elements[9]),
-	mass: parseKilo(elements[10]),
-	power: parseKilo(elements[11]),
-	cycles: parseKilo(elements[12]),
-	price: parseInt(elements[13]),
-    };
+	const elements = line.split(',');
+	const weapon_type = elements[4];
+	const firing_speed = parseKilo(elements[5]);
+	const reload_speed = parseKilo(elements[6]);
+	const weapon_damage = parseKilo(elements[7]);
+	let dps = 0;
+	if (weapon_type === 'Missile') {
+		dps = weapon_damage / reload_speed;
+	} else if (weapon_type === 'Cannon') {
+		dps = weapon_damage / firing_speed;
+	}
+	const size = elements[2].toLowerCase();
+	let size_points = 5;
+	if (size === "medium") {
+		size_points = 10;
+	} else if (size === "large") {
+		size_points = 15;
+	}
+	return {
+		id: elements[0],
+		name: elements[1],
+		size,
+		size_points,
+		description: elements[3],
+		weapon_type,
+		firing_speed,
+		reload_speed,
+		weapon_damage,
+		optimal_range: parseInt(elements[8]),
+		dps,
+		fall_off: parseKilo(elements[9]),
+		mass: parseKilo(elements[10]),
+		power: parseKilo(elements[11]),
+		cycles: parseKilo(elements[12]),
+		price: parseInt(elements[13]),
+	};
 };
 
 export const WEAPONS = WEAPONS_STRING.split('\n').map(weaponFromLine);
@@ -168,17 +185,17 @@ const CAPACITORS_STRING = `1,Relian Shipyards,R1000,Interceptor,375,1500,300,962
 20,Thill Conglomerate,Omega 9500,Battleship,9200,19000,5700,19923`;
 
 const capacitorFromLine = (line) => {
-    const elements = line.split(',');
-    return {
-	id: elements[0],
-	make: elements[1],
-	model: elements[2],
-	ss_type: elements[3],
-	mass: parseKilo(elements[4]),
-	kear: parseKilo(elements[5]),
-	power: parseKilo(elements[6]),
-	price: parseInt(elements[7]),
-    };
+	const elements = line.split(',');
+	return {
+		id: elements[0],
+		make: elements[1],
+		model: elements[2],
+		ss_type: elements[3],
+		mass: parseKilo(elements[4]),
+		kear: parseKilo(elements[5]),
+		power: parseKilo(elements[6]),
+		price: parseInt(elements[7]),
+	};
 };
 
 export const CAPACITORS = CAPACITORS_STRING.split('\n').map(capacitorFromLine);
@@ -227,17 +244,17 @@ const ENGINES_STRING = `23,Ostarian Designs,Gamma 50,Interceptor,380,1900,500,32
 58,Wayland Astrotech,GR1015-AST,Battleship,11000,16450,11700,50034`;
 
 const engineFromLine = (line) => {
-    const elements = line.split(',');
-    return {
-	id: elements[0],
-	make: elements[1],
-	model: elements[2],
-	ss_type: elements[3],
-	mass: parseKilo(elements[4]),
-	thrust: parseKilo(elements[5]),
-	power: parseKilo(elements[6]),
-	price: parseInt(elements[7]),
-    };
+	const elements = line.split(',');
+	return {
+		id: elements[0],
+		make: elements[1],
+		model: elements[2],
+		ss_type: elements[3],
+		mass: parseKilo(elements[4]),
+		thrust: parseKilo(elements[5]),
+		power: parseKilo(elements[6]),
+		price: parseInt(elements[7]),
+	};
 };
 
 export const ENGINES = ENGINES_STRING.split('\n').map(engineFromLine);
@@ -266,23 +283,23 @@ const SHIELDS_STRING = `1,Nebulan Yards,Sentinel 20,Interceptor,500,2000,18,600,
 18,Warpring Enterprises,Bulwark 42K,Battleship,14000,42000,21,12500,78888,0.00%,0.00%,10.00%`;
 
 const shieldFromLine = (line) => {
-    const elements = line.split(',');
-    return {
-	id: elements[0],
-	make: elements[1],
-	model: elements[2],
-	ss_type: elements[3],
-	mass: parseKilo(elements[4]),
-	strength: parseKilo(elements[5]),
-	recharge_time: parseKilo(elements[6]),
-	power: parseKilo(elements[7]),
-	price: parseInt(elements[8]),
-	resistances: {
-	    kinetic: parseKilo(elements[9]),
-	    thermal: parseKilo(elements[10]),
-	    EM: parseKilo(elements[11]),
-	},
-    };
+	const elements = line.split(',');
+	return {
+		id: elements[0],
+		make: elements[1],
+		model: elements[2],
+		ss_type: elements[3],
+		mass: parseKilo(elements[4]),
+		strength: parseKilo(elements[5]),
+		recharge_time: parseKilo(elements[6]),
+		power: parseKilo(elements[7]),
+		price: parseInt(elements[8]),
+		resistances: {
+			kinetic: parseKilo(elements[9]),
+			thermal: parseKilo(elements[10]),
+			EM: parseKilo(elements[11]),
+		},
+	};
 };
 
 export const SHIELDS = SHIELDS_STRING.split('\n').map(shieldFromLine);
@@ -302,17 +319,17 @@ const SENSORS_STRING = `1,Coreward Group,Core15,Interceptor,125,12,600,1837
 13,Artekeera Detection,SG10,Battleship,3600,22,11750,21919`;
 
 const sensorFromLine = (line) => {
-    const elements = line.split(',');
-    return {
-	id: elements[0],
-	make: elements[1],
-	model: elements[2],
-	ss_type: elements[3],
-	mass: parseKilo(elements[4]),
-	strength: parseInt(elements[5]),
-	power: parseKilo(elements[6]),
-	price: parseInt(elements[7]),
-    };
+	const elements = line.split(',');
+	return {
+		id: elements[0],
+		make: elements[1],
+		model: elements[2],
+		ss_type: elements[3],
+		mass: parseKilo(elements[4]),
+		strength: parseInt(elements[5]),
+		power: parseKilo(elements[6]),
+		price: parseInt(elements[7]),
+	};
 };
 
 export const SENSORS = SENSORS_STRING.split('\n').map(sensorFromLine);
@@ -338,69 +355,62 @@ const SHIPSIMS_STRING = `3,Aphador Cooperative,MPL10,Interceptor,220,1000,400,50
 17,Bor Rai Cognition,BRC3000,Battleship,6000,28500,10000,81225`;
 
 const shipsimFromLine = (line) => {
-    const elements = line.split(',');
-    return {
-	id: elements[0],
-	make: elements[1],
-	model: elements[2],
-	ss_type: elements[3],
-	mass: parseKilo(elements[4]),
-	cycles: parseKilo(elements[5]),
-	power: parseKilo(elements[6]),
-	price: parseInt(elements[7]),
-    };
+	const elements = line.split(',');
+	return {
+		id: elements[0],
+		make: elements[1],
+		model: elements[2],
+		ss_type: elements[3],
+		mass: parseKilo(elements[4]),
+		cycles: parseKilo(elements[5]),
+		power: parseKilo(elements[6]),
+		price: parseInt(elements[7]),
+	};
 };
 
 export const SHIPSIMS = SHIPSIMS_STRING.split('\n').map(shipsimFromLine);
 
 export const getComponent = (superstructureId, masterList, componentId) => {
-    const ss_type = SUPERSTRUCTURES.find(ss => ss.id === superstructureId).ss_type;
-    const sublist = masterList
-	  .filter(component => component.ss_type === ss_type);
-    sublist.sort((a, b) => a.price - b.price);
-    let value = componentId;
+	const ss_type = SUPERSTRUCTURES.find(ss => ss.id === superstructureId).ss_type;
+	const sublist = masterList
+		.filter(component => component.ss_type === ss_type);
+	sublist.sort((a, b) => a.price - b.price);
+	let value = componentId;
 	console.log(componentId, sublist);
-    if (!sublist.find(component => component.id === componentId)) {
-	value = sublist[0].id;
-	console.log(componentId, sublist);
-    }
-    return masterList.find(component => component.id === value);
+	if (!sublist.find(component => component.id === componentId)) {
+		value = sublist[0].id;
+		console.log(componentId, sublist);
+	}
+	return masterList.find(component => component.id === value);
 };
 
 const getModulesFromList = (masterList, count, moduleIds) => {
-    const modules = [];
-    for (let i = 0; i < count; i++) {
-	if (moduleIds[i] && moduleIds[i].id) {
-	    console.log(moduleIds, i);
-	    const module = masterList.find(module => module.id === moduleIds[i].id);
-	    modules.push({
-		...moduleIds[i],
-		...module,
-	    });
+	const modules = [];
+	for (let i = 0; i < count; i++) {
+		if (moduleIds[i] && moduleIds[i].id) {
+			console.log(moduleIds, i);
+			const module = masterList.find(module => module.id === moduleIds[i].id);
+			modules.push({
+				...moduleIds[i],
+				...module,
+			});
+		}
 	}
-    }
-    return modules;
+	return modules;
 };
 
 export const getModules = (superstructureId, moduleIds) => {
-    const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId);
-    const { small, medium, large } = moduleIds;
-    return {
-	small: getModulesFromList(MODULES, superstructure.modules.small, small),
-	medium: getModulesFromList(MODULES, superstructure.modules.medium, medium),
-	large: getModulesFromList(MODULES, superstructure.modules.large, large),
-    };
+	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId);
+	return getModulesFromList(MODULES, superstructure.modules, moduleIds);
 };
 
 export const getWeapons = (superstructureId, moduleIds) => {
-    const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId);
-    const { small, medium, large } = moduleIds;
-    return {
-	small: getModulesFromList(WEAPONS, superstructure.weapons.small, small),
-	medium: getModulesFromList(WEAPONS, superstructure.weapons.medium, medium),
-	large: getModulesFromList(WEAPONS, superstructure.weapons.large, large),
-    };
+	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId);
+	return getModulesFromList(WEAPONS, superstructure.weapons, moduleIds);
 };
+
+export const getPointsUsed = (selected, masterList) =>
+	selected.reduce((acc, { id }) => acc + masterList.find(module => module.id === id).size_points, 0);;
 
 const isEnabled = ({ disabled }) => !disabled;
 const sumPower = (acc, weapon) => acc + weapon.power;
@@ -408,58 +418,50 @@ const sumCycles = (acc, weapon) => acc + weapon.cycles;
 const sumPrice = (acc, item) => acc + item.price;
 const sumDps = (acc, item) => acc + item.dps;
 
-export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, shipsim, weapons, modules }) => {
-    const massUsed = superstructure.mass + capacitor.mass + shield.mass + sensor.mass + engine.mass + shipsim.mass;
-    
-    const thrustRatio = engine.thrust / massUsed;
+export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, shipsim, weapons, modules, weaponPoints, modulePoints }) => {
+	const massUsed = superstructure.mass + capacitor.mass + shield.mass + sensor.mass + engine.mass + shipsim.mass;
 
-    const weaponsEnabled = [
-	...weapons.small.filter(isEnabled),
-	...weapons.medium.filter(isEnabled),
-	...weapons.large.filter(isEnabled),
-    ];
-    const modulesEnabled = [
-	...modules.small.filter(isEnabled),
-	...modules.medium.filter(isEnabled),
-	...modules.large.filter(isEnabled),
-    ];
-    
-    const maxPower = superstructure.power;
-    const weaponPower = weaponsEnabled.reduce(sumPower, 0);
-    const modulePower = modulesEnabled.reduce(sumPower, 0);;
-    const dps = weaponsEnabled.reduce(sumDps, 0);
-    
-    const powerUsed = capacitor.power + shield.power + sensor.power + engine.power + shipsim.power + weaponPower + modulePower;
-    const powerLeft = maxPower - powerUsed;
+	const thrustRatio = engine.thrust / massUsed;
 
-    const maxCycles = shipsim.cycles;
-    const weaponCycles = weaponsEnabled.reduce(sumCycles, 0);
-    const moduleCycles  = modulesEnabled.reduce(sumCycles, 0);
-    const cyclesLeft = maxCycles - weaponCycles - moduleCycles;
+	const weaponsEnabled = weapons.filter(isEnabled);
+	const modulesEnabled = modules.filter(isEnabled);
 
-    const totalPrice = [
-	superstructure,
-	capacitor,
-	shield,
-	sensor,
-	engine,
-	shipsim,
-	...weapons.small,
-	...weapons.medium,
-	...weapons.large,
-	...modules.small,
-	...modules.medium,
-	...modules.large,
-    ].reduce(sumPrice, 0);
-    
-    return {
-	massUsed,
-	maxPower,
-	powerLeft,
-	dps,
-	thrustRatio,
-	maxCycles,
-	cyclesLeft,
-	totalPrice,
-    };
+	const maxPower = superstructure.power;
+	const weaponPower = weaponsEnabled.reduce(sumPower, 0);
+	const modulePower = modulesEnabled.reduce(sumPower, 0);
+	const dps = weaponsEnabled.reduce(sumDps, 0);
+
+	const powerUsed = capacitor.power + shield.power + sensor.power + engine.power + shipsim.power + weaponPower + modulePower;
+	const powerLeft = maxPower - powerUsed;
+
+	const maxCycles = shipsim.cycles;
+	const weaponCycles = weaponsEnabled.reduce(sumCycles, 0);
+	const moduleCycles = modulesEnabled.reduce(sumCycles, 0);
+	const cyclesLeft = maxCycles - weaponCycles - moduleCycles;
+
+	console.log(weapons, weaponPoints, modulePoints, superstructure);
+
+	const totalPrice = [
+		superstructure,
+		capacitor,
+		shield,
+		sensor,
+		engine,
+		shipsim,
+		...weapons,
+		...modules,
+	].reduce(sumPrice, 0);
+
+	return {
+		massUsed,
+		maxPower,
+		powerLeft,
+		dps,
+		thrustRatio,
+		maxCycles,
+		cyclesLeft,
+		totalPrice,
+		overModules: modulePoints > superstructure.modules.points,
+		overWeapons: weaponPoints > superstructure.weapons.points,
+	};
 };
