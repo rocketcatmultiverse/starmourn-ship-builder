@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { SUPERSTRUCTURES, CAPACITORS, ENGINES, SHIELDS, SHIPSIMS, SENSORS, WEAPONS, MODULES, getComponent, getModules, getWeapons, getPointsUsed, shipStats } from './Forge';
+import { SUPERSTRUCTURES, CAPACITORS, ENGINES, SHIELDS, SHIPSIMS, SENSORS, WEAPONS, MODULES } from './Data';
+import { getComponent, getModules, getWeapons, getPointsUsed, shipStats } from './Forge';
 
 const Superstructure = ({ id, make, model, ss_type }) => {
 	return (
@@ -217,13 +218,14 @@ const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim, senso
 		weaponPoints: getPointsUsed(weapons, WEAPONS),
 		modulePoints: getPointsUsed(modules, MODULES),
 	};
-	const { maxPower, massUsed, powerLeft, thrustRatio, cyclesLeft, maxCycles, dps, totalPrice, overModules, overWeapons } = shipStats(ship);
+	const { maxPower, massUsed, powerLeft, thrustRatio, cyclesLeft, maxCycles, dps, totalPrice, overModules, overWeapons, turnSpeed } = shipStats(ship);
 	return (<div className="ship">
 		<span className="power">Power: <span className="power_left">{powerLeft}</span>/<span className="max_power">{maxPower}</span></span>
 		<span className="cycles">Cycles: <span className="cycles_left">{cyclesLeft}</span>/<span className="max_cycles">{maxCycles}</span></span>
 		<span className="dps">DPS: <span className="dps">{dps}</span></span>
 		<span className="mass">Mass: <span className="mass_used">{massUsed}</span></span>
 		<span className="thrust">Thrust Over Mass: <span className="thrust_ratio">{thrustRatio}</span></span>
+		<span className="turn_speed">Turn Speed: <span className="turn_speed_seconds">{turnSpeed}</span></span>
 		<span className="price">Price: <span className="total_price">{totalPrice}</span></span>
 		{overModules && <span className="over_modules">TOO MANY MODULES / MODULES TOO LARGE</span>}
 		{overWeapons && <span className="over_weapons">TOO MANY WEAPONS / WEAPONS TOO LARGE</span>}

@@ -51,6 +51,7 @@ select, option {
 .cycles,
 .mass,
 .thrust,
+.turn_speed,
 .dps,
 .price {
     color: #edab04;
