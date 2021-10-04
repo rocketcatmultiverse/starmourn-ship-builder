@@ -43,7 +43,7 @@ const isEnabled = ({ disabled }) => !disabled;
 const sumPower = (acc, weapon) => acc + weapon.power;
 const sumCycles = (acc, weapon) => acc + weapon.cycles;
 const sumPrice = (acc, item) => acc + item.price;
-const sumDps = (acc, item) => acc + item.dps;
+const sumDps = (acc, item) => acc + (item.weapon_damage / (item.firing_speed || 1.0));
 
 export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, shipsim, weapons, modules, weaponPoints, modulePoints }) => {
 	const massUsed = superstructure.mass + capacitor.mass + shield.mass + sensor.mass + engine.mass + shipsim.mass;
