@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { SUPERSTRUCTURES, CAPACITORS, ENGINES, SHIELDS, SHIPSIMS, SENSORS, WEAPONS, MODULES, SHIP_MODS } from './Data';
-import { getComponent, getModules, getWeapons, getPointsUsed, shipStats, getModPointsUsed, getMods, getValidMods } from './Forge';
-import modify from './Mods';
+import { getComponent, getModules, getWeapons, getPointsUsed, shipStats, getModPointsUsed, getMods } from './Forge';
+import { modify, MOD_PART_TYPES, getValidMods } from './Mods';
 
 const Superstructure = ({ id, make, model, ss_type }) => {
 	return (
@@ -302,7 +302,7 @@ const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim, senso
 		weaponPoints: getPointsUsed(weapons, WEAPONS),
 		modulePoints: getPointsUsed(modules, MODULES),
 	};
-	const { maxPower, massUsed, powerLeft, thrustRatio, cyclesLeft, maxCycles, dps, totalPrice, overModules, overWeapons, overMods, turnSpeed } = shipStats(ship);
+	const { maxPower, massUsed, powerLeft, thrustRatio, cyclesLeft, maxCycles, dps, totalPrice, overModules, overWeapons, overModded, turnSpeed, modCosts } = shipStats(ship);
 	return (<div className="ship">
 		<span className="power">Power: <span className="power_left">{powerLeft}</span>/<span className="max_power">{maxPower}</span></span>
 		<span className="cycles">Cycles: <span className="cycles_left">{cyclesLeft}</span>/<span className="max_cycles">{maxCycles}</span></span>
@@ -313,6 +313,11 @@ const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim, senso
 		<span className="price">Price: <span className="total_price">{totalPrice}</span></span>
 		{overModules && <span className="over_modules">TOO MANY MODULES / MODULES TOO LARGE</span>}
 		{overWeapons && <span className="over_weapons">TOO MANY WEAPONS / WEAPONS TOO LARGE</span>}
+		{overModded && <span className="over_modded">TOO MANY SHIP MODS</span>}
+		<div className="mod_costs">
+			{MOD_PART_TYPES.map(partType => <div className="mod_costs_header">{partType}</div>)}
+			{MOD_PART_TYPES.map(partType => <div className="mod_cost">{modCosts[partType]}</div>)}
+		</div>
 	</div>);
 };
 

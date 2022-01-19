@@ -1,5 +1,5 @@
 import { SUPERSTRUCTURES, WEAPONS, MODULES, SHIPSIMS, CAPACITORS, SENSORS, ENGINES, SHIELDS, SHIP_MODS } from "./Data";
-import modify from './Mods';
+import { getModCosts, modify } from './Mods';
 
 export const getComponent = (superstructureId, masterList, componentId, modsWithLevels) => {
 	const ss_type = SUPERSTRUCTURES.find(ss => ss.id === superstructureId).ss_type;
@@ -30,20 +30,20 @@ const getModulesFromList = (masterList, moduleIds) => {
 
 export const getModules = (superstructureId, moduleIds, mods) => {
 	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId, mods);
-	return getModulesFromList(MODULES, moduleIds);
+	const baseModules = getModulesFromList(MODULES, moduleIds);
+	return baseModules.map(baseModule => modify(baseModule, MODULES, mods));
 };
 
 export const getWeapons = (superstructureId, moduleIds, mods) => {
 	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId, mods);
-	return getModulesFromList(WEAPONS, moduleIds);
+	const baseWeapons = getModulesFromList(WEAPONS, moduleIds);
+	return baseWeapons.map(baseWeapon => modify(baseWeapon, WEAPONS, mods));
 };
 
 export const getMods = (mods) => mods.map(({ id, level }) => ({
 	mod: SHIP_MODS.find((mod) => mod.id === id),
 	level,
 }));
-
-export const getValidMods = (masterList, selectedIds) => masterList.filter(mod => selectedIds.indexOf(mod.id) === -1)
 
 export const getPointsUsed = (selected, masterList) =>
 	selected.reduce((acc, { id }) => acc + masterList.find(module => module.id === id).size_points, 0);
@@ -57,7 +57,7 @@ const sumCycles = (acc, weapon) => acc + weapon.cycles;
 const sumPrice = (acc, item) => acc + item.price;
 const sumDps = (acc, item) => acc + (item.weapon_damage / (item.firing_speed || 1.0));
 
-export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, shipsim, weapons, modules, weaponPoints, modulePoints }) => {
+export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, shipsim, weapons, modules, weaponPoints, modulePoints, mods }) => {
 	const massUsed = superstructure.mass + capacitor.mass + shield.mass + sensor.mass + engine.mass + shipsim.mass;
 
 	const thrustRatio = engine.thrust / massUsed;
@@ -101,5 +101,7 @@ export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, s
 		totalPrice,
 		overModules: modulePoints > superstructure.modules.points,
 		overWeapons: weaponPoints > superstructure.weapons.points,
+		overModded: getModPointsUsed(mods) > 60,
+		modCosts: getModCosts(mods),
 	};
 };

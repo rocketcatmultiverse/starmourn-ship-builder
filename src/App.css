@@ -53,13 +53,15 @@ select, option {
 .thrust,
 .turn_speed,
 .dps,
-.price {
+.price,
+.mod_costs {
     color: #edab04;
     text-transform: capitalize;
     margin: 4px;
 }
 .over_modules,
-.over_weapons {
+.over_weapons,
+.over_modded {
     color: #f20c3d;
 }
 
@@ -96,4 +98,12 @@ select, option {
 .ship {
     display: flex;
     flex-direction: column;
+}
+
+.mod_costs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+.mod_costs > div {
+    flex-basis: 20%;
 }

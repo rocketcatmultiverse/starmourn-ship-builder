@@ -9,8 +9,11 @@ const getModWithLevel = ({ mod, level }) => {
     };
 };
 
-const percentModify = (value, percentChange) => {
-    const change = Math.ceil(value * percentChange / 100);
+const percentModify = (value, percentChange, integer = true) => {
+    const change = value * percentChange / 100;
+    if (integer) {
+        return Math.ceil(value + change);
+    }
     return value + change;
 }
 
@@ -34,11 +37,9 @@ const optimizationsMatch = (id, baseComponent) => `${baseComponent.weapon_type}_
 
 const modifyOnce = (baseComponent, masterList, modWithLevel) => {
     const { id } = modWithLevel.mod;
-    console.log(id, masterList === SUPERSTRUCTURES);
     if (id == 'expanded_modulebay' && masterList === SUPERSTRUCTURES) {
         const [transferred] = getModWithLevel(modWithLevel).effects;
         const change = Math.ceil(baseComponent.weapons.points * transferred / 100);
-        console.log('mod', transferred, change);
         return {
             ...baseComponent,
             weapons: {
@@ -51,7 +52,6 @@ const modifyOnce = (baseComponent, masterList, modWithLevel) => {
     } else if (id == 'expanded_hardpoints' && masterList === SUPERSTRUCTURES) {
         const [transferred] = getModWithLevel(modWithLevel).effects;
         const change = Math.ceil(baseComponent.modules.points * transferred / 100);
-        console.log('weap', transferred, change);
         return {
             ...baseComponent,
             weapons: {
@@ -90,7 +90,7 @@ const modifyOnce = (baseComponent, masterList, modWithLevel) => {
         const [turnTime, hull] = getModWithLevel(modWithLevel).effects;
         return {
             ...baseComponent,
-            turn_time: percentModify(baseComponent.turn_time, turnTime),
+            turn_time: percentModify(baseComponent.turn_time, turnTime, false),
             strength: percentModify(baseComponent.strength, hull),
         };
     } else if (id === 'max_speed' && masterList === ENGINES) {
@@ -169,7 +169,7 @@ const modifyOnce = (baseComponent, masterList, modWithLevel) => {
             strength: percentModify(baseComponent.strength, strength),
             power: percentModify(baseComponent.power, powerCost),
         };
-    } else if (id === 'shipsim_overclock' && masterList === SENSORS) {
+    } else if (id === 'shipsim_overclock' && masterList === SHIPSIMS) {
         const [strength, powerCost] = getModWithLevel(modWithLevel).effects;
         return {
             ...baseComponent,
@@ -177,7 +177,7 @@ const modifyOnce = (baseComponent, masterList, modWithLevel) => {
             cycles: percentModify(baseComponent.cycles, strength),
             power: percentModify(baseComponent.power, powerCost),
         };
-    } else if (id === 'capacitor_overclock' && masterList === SENSORS) {
+    } else if (id === 'capacitor_overclock' && masterList === CAPACITORS) {
         const [strength, powerCost] = getModWithLevel(modWithLevel).effects;
         return {
             ...baseComponent,
@@ -185,7 +185,7 @@ const modifyOnce = (baseComponent, masterList, modWithLevel) => {
             kear: percentModify(baseComponent.kear, strength),
             power: percentModify(baseComponent.power, powerCost),
         };
-    } else if (id === 'engine_overclock' && masterList === SENSORS) {
+    } else if (id === 'engine_overclock' && masterList === ENGINES) {
         const [strength, powerCost] = getModWithLevel(modWithLevel).effects;
         return {
             ...baseComponent,
@@ -236,11 +236,78 @@ const modifyOnce = (baseComponent, masterList, modWithLevel) => {
     return baseComponent;
 };
 
-const modify = (baseComponent, masterList, modsWithLevels) => {
+export const modify = (baseComponent, masterList, modsWithLevels) => {
     return modsWithLevels
         .reduce((component, modWithLevel) =>
             modifyOnce(component, masterList, modWithLevel),
             baseComponent);
 };
 
-export default modify;
+export const MOD_PART_TYPES = ['Nanotube', 'Superalloy', 'Aerogel', 'Metamaterial', 'Amorphite'];
+
+export const getModCosts = (modsWithLevels) => {
+    return modsWithLevels
+        .reduce((costs, modWithLevel) => {
+            const parts = modWithLevel.mod.parts[modWithLevel.level - 1];
+            const partTypes = Object.keys(parts);
+            for (let i = 0; i < partTypes.length; i++) {
+                const partType = partTypes[i];
+                costs[partType] += parts[partType];
+            }
+            return costs;
+        },
+            {
+                Nanotube: 0,
+                Superalloy: 0,
+                Aerogel: 0,
+                Metamaterial: 0,
+                Amorphite: 0,
+            });
+};
+
+const INCOMPATABILITIES = {};
+
+const incompatable = (a, ...rest) => {
+    if (!INCOMPATABILITIES[a]) {
+        INCOMPATABILITIES[a] = [];
+    }
+    if (!SHIP_MODS.some(mod => mod.id === a)) {
+        throw `Missing ${a}`;
+    }
+    for (let i = 0; i < rest.length; i++) {
+        const b = rest[i];
+        if (!SHIP_MODS.some(mod => mod.id === b)) {
+            throw `Missing ${b}`;
+        }
+        if (!INCOMPATABILITIES[b]) {
+            INCOMPATABILITIES[b] = [];
+        }
+        INCOMPATABILITIES[a].push(b);
+        INCOMPATABILITIES[b].push(a);
+    }
+}
+incompatable('expanded_modulebay', 'expanded_hardpoints');
+incompatable('expanded_modulebay', 'expanded_cargohold');
+incompatable('expanded_hardpoints', 'expanded_cargohold');
+
+incompatable('missile_optimize', 'missile_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
+incompatable('turret_optimize', 'turret_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
+incompatable('laser_optimize', 'laser_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
+incompatable('cannon_optimize', 'cannon_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
+
+incompatable('sensor_optimize', 'beacon_range', 'sensor_overclock', 'sensor_bulwark');
+incompatable('shield_optimize', 'shield_augment', 'shield_recharge', 'shield_redundancy', 'shield_res_gravitic', 'shield_res_kinetic', 'shield_res_em');
+incompatable('shipsim_optimize', 'shipsim_overclock', 'shipsim_bulwark');
+incompatable('capacitor_optimize', 'capacitor_overclock', 'capacitor_bulwark');
+incompatable('engine_optimize', 'max_speed', 'engine_overclock', 'engine_bulwark');
+
+export const getValidMods = (masterList, selectedIds) => {
+    return masterList.filter(mod => {
+        if (selectedIds.indexOf(mod.id) !== -1) {
+            return false;
+        } else if (INCOMPATABILITIES[mod.id]) {
+            return !INCOMPATABILITIES[mod.id].some((id) => selectedIds.indexOf(id) !== -1);
+        }
+        return true;
+    });
+};
