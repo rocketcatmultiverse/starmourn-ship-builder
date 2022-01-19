@@ -4579,8 +4579,8 @@ const incompatable = (a, ...rest) => {
     }
 }
 incompatable('expanded_modulebay', 'expanded_hardpoints');
-incompatable('expanded_modulebay', 'expanded_cargohold');
-incompatable('expanded_hardpoints', 'expanded_cargohold');
+incompatable('expanded_modulebay', 'cargohold_optimizer');
+incompatable('expanded_hardpoints', 'cargohold_optimizer');
 
 incompatable('missile_optimize', 'missile_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
 incompatable('turret_optimize', 'turret_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
