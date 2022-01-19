@@ -1,6 +1,7 @@
-import { SUPERSTRUCTURES, WEAPONS, MODULES, SHIPSIMS, CAPACITORS, SENSORS, ENGINES, SHIELDS } from "./Data";
+import { SUPERSTRUCTURES, WEAPONS, MODULES, SHIPSIMS, CAPACITORS, SENSORS, ENGINES, SHIELDS, SHIP_MODS } from "./Data";
+import modify from './Mods';
 
-export const getComponent = (superstructureId, masterList, componentId) => {
+export const getComponent = (superstructureId, masterList, componentId, modsWithLevels) => {
 	const ss_type = SUPERSTRUCTURES.find(ss => ss.id === superstructureId).ss_type;
 	const sublist = masterList
 		.filter(component => component.ss_type === ss_type);
@@ -9,7 +10,8 @@ export const getComponent = (superstructureId, masterList, componentId) => {
 	if (!sublist.find(component => component.id === componentId)) {
 		value = sublist[0].id;
 	}
-	return masterList.find(component => component.id === value);
+	const baseComponent = masterList.find(component => component.id === value);
+	return modify(baseComponent, masterList, modsWithLevels);
 };
 
 const getModulesFromList = (masterList, moduleIds) => {
@@ -26,18 +28,28 @@ const getModulesFromList = (masterList, moduleIds) => {
 	return modules;
 };
 
-export const getModules = (superstructureId, moduleIds) => {
-	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId);
+export const getModules = (superstructureId, moduleIds, mods) => {
+	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId, mods);
 	return getModulesFromList(MODULES, moduleIds);
 };
 
-export const getWeapons = (superstructureId, moduleIds) => {
-	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId);
+export const getWeapons = (superstructureId, moduleIds, mods) => {
+	const superstructure = getComponent(superstructureId, SUPERSTRUCTURES, superstructureId, mods);
 	return getModulesFromList(WEAPONS, moduleIds);
 };
 
+export const getMods = (mods) => mods.map(({ id, level }) => ({
+	mod: SHIP_MODS.find((mod) => mod.id === id),
+	level,
+}));
+
+export const getValidMods = (masterList, selectedIds) => masterList.filter(mod => selectedIds.indexOf(mod.id) === -1)
+
 export const getPointsUsed = (selected, masterList) =>
-	selected.reduce((acc, { id }) => acc + masterList.find(module => module.id === id).size_points, 0);;
+	selected.reduce((acc, { id }) => acc + masterList.find(module => module.id === id).size_points, 0);
+
+export const getModPointsUsed = (selected) =>
+	selected.reduce((acc, { level }) => acc + level, 0);
 
 const isEnabled = ({ disabled }) => !disabled;
 const sumPower = (acc, weapon) => acc + weapon.power;

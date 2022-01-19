@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/starmourn-ship-builder/static/css/main.20d872ee.chunk.css",
-    "main.js": "/starmourn-ship-builder/static/js/main.9b28732e.chunk.js",
-    "main.js.map": "/starmourn-ship-builder/static/js/main.9b28732e.chunk.js.map",
+    "main.js": "/starmourn-ship-builder/static/js/main.9f76f043.chunk.js",
+    "main.js.map": "/starmourn-ship-builder/static/js/main.9f76f043.chunk.js.map",
     "runtime-main.js": "/starmourn-ship-builder/static/js/runtime-main.197783f2.js",
     "runtime-main.js.map": "/starmourn-ship-builder/static/js/runtime-main.197783f2.js.map",
-    "static/js/2.9c6e430d.chunk.js": "/starmourn-ship-builder/static/js/2.9c6e430d.chunk.js",
-    "static/js/2.9c6e430d.chunk.js.map": "/starmourn-ship-builder/static/js/2.9c6e430d.chunk.js.map",
+    "static/js/2.617ec691.chunk.js": "/starmourn-ship-builder/static/js/2.617ec691.chunk.js",
+    "static/js/2.617ec691.chunk.js.map": "/starmourn-ship-builder/static/js/2.617ec691.chunk.js.map",
     "static/js/3.45bd5d3f.chunk.js": "/starmourn-ship-builder/static/js/3.45bd5d3f.chunk.js",
     "static/js/3.45bd5d3f.chunk.js.map": "/starmourn-ship-builder/static/js/3.45bd5d3f.chunk.js.map",
     "index.html": "/starmourn-ship-builder/index.html",
     "static/css/main.20d872ee.chunk.css.map": "/starmourn-ship-builder/static/css/main.20d872ee.chunk.css.map",
-    "static/js/2.9c6e430d.chunk.js.LICENSE.txt": "/starmourn-ship-builder/static/js/2.9c6e430d.chunk.js.LICENSE.txt",
+    "static/js/2.617ec691.chunk.js.LICENSE.txt": "/starmourn-ship-builder/static/js/2.617ec691.chunk.js.LICENSE.txt",
     "static/media/logo.6ce24c58.svg": "/starmourn-ship-builder/static/media/logo.6ce24c58.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.197783f2.js",
-    "static/js/2.9c6e430d.chunk.js",
+    "static/js/2.617ec691.chunk.js",
     "static/css/main.20d872ee.chunk.css",
-    "static/js/main.9b28732e.chunk.js"
+    "static/js/main.9f76f043.chunk.js"
   ]
 }

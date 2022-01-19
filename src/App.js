@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { SUPERSTRUCTURES, CAPACITORS, ENGINES, SHIELDS, SHIPSIMS, SENSORS, WEAPONS, MODULES } from './Data';
-import { getComponent, getModules, getWeapons, getPointsUsed, shipStats } from './Forge';
+import { SUPERSTRUCTURES, CAPACITORS, ENGINES, SHIELDS, SHIPSIMS, SENSORS, WEAPONS, MODULES, SHIP_MODS } from './Data';
+import { getComponent, getModules, getWeapons, getPointsUsed, shipStats, getModPointsUsed, getMods, getValidMods } from './Forge';
+import modify from './Mods';
 
 const Superstructure = ({ id, make, model, ss_type }) => {
 	return (
@@ -86,9 +87,10 @@ const SuperstructureSelection = ({ ssType, setSsType, selected, setSelected }) =
 	);
 };
 
-const ComponentSelection = ({ selected, setSelected, masterList, ss_type, comp_name, comp_type }) => {
+const ComponentSelection = ({ selected, setSelected, masterList, ss_type, comp_name, comp_type, mods }) => {
 	const sublist = masterList
-		.filter(component => component.ss_type === ss_type);
+		.filter(component => component.ss_type === ss_type)
+		.map(component => modify(component, masterList, mods));
 	sublist.sort((a, b) => a.price - b.price);
 	let value = selected;
 	if (!sublist.find(component => component.id === selected)) {
@@ -194,8 +196,8 @@ const ModuleList = ({ selected, setSelected, masterList, points, pointsUsed, nam
 	</div>);
 };
 
-const ModulesSelection = ({ selected, setSelected, masterList, superstructure, name }) => {
-	const counts = getComponent(superstructure, SUPERSTRUCTURES, superstructure)[name];
+const ModulesSelection = ({ selected, setSelected, masterList, superstructure, name, mods }) => {
+	const counts = getComponent(superstructure, SUPERSTRUCTURES, superstructure, mods)[name];
 	const pointsUsed = getPointsUsed(selected, masterList);
 	return (
 		<div className={name}>
@@ -205,20 +207,102 @@ const ModulesSelection = ({ selected, setSelected, masterList, superstructure, n
 	);
 };
 
-const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim, sensor, weapons, modules }) => {
+const ModLevelSelection = ({ mod, level, setLevel }) => {
+	return (
+		<select value={level} onChange={(evt) => setLevel(evt.target.value)}>
+			{new Array(15).fill(null).map((_, idx) => (<option value={idx + 1}>Level {idx + 1}</option>))}
+		</select>
+	);
+};
+
+const ModSelection = ({ selected, setSelected, masterList, selectedIds }) => {
+	return (
+		<div>
+			<select value={selected && selected.id} onChange={(evt) => setSelected({
+				id: evt.target.value,
+				level: (selected && selected.level) || 1,
+			})}>
+				<option value="">None</option>
+				{selected && selected.id && <option value={selected.id}>
+					{selected.id} - {masterList.find((mod) => mod.id === selected.id).name}
+				</option>}
+				{getValidMods(masterList, selectedIds)
+					.map(mod => (<option value={mod.id}>
+						{mod.id} - {mod.name}
+					</option>))}
+			</select>
+			{selected && selected.id && <ModLevelSelection
+				mod={masterList.find((mod) => mod.id == selected.id)}
+				level={selected.level}
+				setLevel={level => setSelected({
+					id: selected.id,
+					level: parseInt(level),
+				})}
+			/>}
+		</div>
+	);
+};
+
+const ModList = ({ selected, setSelected, masterList }) => {
+	const setMod = (idx) => ({ id, level }) => {
+		const updated = [
+			...selected,
+		];
+		if (id) {
+			updated[idx] = {
+				id,
+				level,
+			};
+		} else {
+			updated.splice(idx, 1);
+		}
+		setSelected(updated);
+	};
+	const list = [];
+	for (let i = 0; i < selected.length + 1; i++) {
+		list.push({
+			selected: selected[i],
+			setSelected: setMod(i),
+			masterList,
+			selectedIds: selected.map(select => select.id),
+		});
+	}
+	return (<div className="mod_list">
+		{list.map((item, idx) => (<ModSelection
+			{...item}
+			key={`${item.selected && item.selected.id}_${idx}`}
+		/>))}
+	</div>);
+};
+
+const MAX_MOD_POINTS = 60;
+
+const ModsSelection = ({ selected, setSelected, masterList }) => {
+	const pointsUsed = getModPointsUsed(selected);
+	return (
+		<div className="mods">
+			<Label text={`Mods: ${pointsUsed}/${MAX_MOD_POINTS}`} />
+			<ModList selected={selected} setSelected={setSelected} masterList={masterList} />
+		</div>
+	);
+};
+
+const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim, sensor, weapons, modules, mods }) => {
+	const modsWithLevels = getMods(mods);
 	const ship = {
-		superstructure: getComponent(superstructure, SUPERSTRUCTURES, superstructure),
-		capacitor: getComponent(superstructure, CAPACITORS, capacitor),
-		engine: getComponent(superstructure, ENGINES, engine),
-		shield: getComponent(superstructure, SHIELDS, shield),
-		shipsim: getComponent(superstructure, SHIPSIMS, shipsim),
-		sensor: getComponent(superstructure, SENSORS, sensor),
-		weapons: getWeapons(superstructure, weapons),
-		modules: getModules(superstructure, modules),
+		superstructure: getComponent(superstructure, SUPERSTRUCTURES, superstructure, modsWithLevels),
+		capacitor: getComponent(superstructure, CAPACITORS, capacitor, modsWithLevels),
+		engine: getComponent(superstructure, ENGINES, engine, modsWithLevels),
+		shield: getComponent(superstructure, SHIELDS, shield, modsWithLevels),
+		shipsim: getComponent(superstructure, SHIPSIMS, shipsim, modsWithLevels),
+		sensor: getComponent(superstructure, SENSORS, sensor, modsWithLevels),
+		weapons: getWeapons(superstructure, weapons, modsWithLevels),
+		modules: getModules(superstructure, modules, modsWithLevels),
+		mods: modsWithLevels,
 		weaponPoints: getPointsUsed(weapons, WEAPONS),
 		modulePoints: getPointsUsed(modules, MODULES),
 	};
-	const { maxPower, massUsed, powerLeft, thrustRatio, cyclesLeft, maxCycles, dps, totalPrice, overModules, overWeapons, turnSpeed } = shipStats(ship);
+	const { maxPower, massUsed, powerLeft, thrustRatio, cyclesLeft, maxCycles, dps, totalPrice, overModules, overWeapons, overMods, turnSpeed } = shipStats(ship);
 	return (<div className="ship">
 		<span className="power">Power: <span className="power_left">{powerLeft}</span>/<span className="max_power">{maxPower}</span></span>
 		<span className="cycles">Cycles: <span className="cycles_left">{cyclesLeft}</span>/<span className="max_cycles">{maxCycles}</span></span>
@@ -242,6 +326,8 @@ function App() {
 	const [sensor, setSensor] = useState();
 	const [modules, setModules] = useState([]);
 	const [weapons, setWeapons] = useState([]);
+	const [mods, setMods] = useState([]);
+	const modsWithLevels = getMods(mods);
 	const ship = {
 		superstructure,
 		capacitor,
@@ -251,17 +337,19 @@ function App() {
 		sensor,
 		weapons,
 		modules,
+		mods,
 	};
 	return (
 		<div className="App">
-			<SuperstructureSelection ssType={ssType} setSsType={setSsType} selected={superstructure} setSelected={setSuperstructure} />
-			<ComponentSelection selected={capacitor} setSelected={setCapacitor} masterList={CAPACITORS} ss_type={ssType} comp_name="capacitors" comp_type={Capacitor} />
-			<ComponentSelection selected={engine} setSelected={setEngine} masterList={ENGINES} ss_type={ssType} comp_name="engines" comp_type={Engine} />
-			<ComponentSelection selected={shield} setSelected={setShield} masterList={SHIELDS} ss_type={ssType} comp_name="shields" comp_type={Shield} />
-			<ComponentSelection selected={shipsim} setSelected={setShipsim} masterList={SHIPSIMS} ss_type={ssType} comp_name="shipsims" comp_type={Shipsim} />
-			<ComponentSelection selected={sensor} setSelected={setSensor} masterList={SENSORS} ss_type={ssType} comp_name="sensors" comp_type={Sensor} />
-			<ModulesSelection selected={modules} setSelected={setModules} superstructure={superstructure} masterList={MODULES} name="modules" />
-			<ModulesSelection selected={weapons} setSelected={setWeapons} superstructure={superstructure} masterList={WEAPONS} name="weapons" />
+			<SuperstructureSelection ssType={ssType} setSsType={setSsType} selected={superstructure} setSelected={setSuperstructure} mods={modsWithLevels} />
+			<ComponentSelection selected={capacitor} setSelected={setCapacitor} masterList={CAPACITORS} ss_type={ssType} comp_name="capacitors" comp_type={Capacitor} mods={modsWithLevels} />
+			<ComponentSelection selected={engine} setSelected={setEngine} masterList={ENGINES} ss_type={ssType} comp_name="engines" comp_type={Engine} mods={modsWithLevels} />
+			<ComponentSelection selected={shield} setSelected={setShield} masterList={SHIELDS} ss_type={ssType} comp_name="shields" comp_type={Shield} mods={modsWithLevels} />
+			<ComponentSelection selected={shipsim} setSelected={setShipsim} masterList={SHIPSIMS} ss_type={ssType} comp_name="shipsims" comp_type={Shipsim} mods={modsWithLevels} />
+			<ComponentSelection selected={sensor} setSelected={setSensor} masterList={SENSORS} ss_type={ssType} comp_name="sensors" comp_type={Sensor} mods={modsWithLevels} />
+			<ModulesSelection selected={modules} setSelected={setModules} superstructure={superstructure} masterList={MODULES} name="modules" mods={modsWithLevels} />
+			<ModulesSelection selected={weapons} setSelected={setWeapons} superstructure={superstructure} masterList={WEAPONS} name="weapons" mods={modsWithLevels} />
+			<ModsSelection selected={mods} setSelected={setMods} masterList={SHIP_MODS} />
 			<ShipDisplay {...ship} />
 		</div>
 	);
