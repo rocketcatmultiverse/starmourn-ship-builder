@@ -4556,3 +4556,39 @@ SHIP_MODS.sort((a, b) => {
         return 0;
     }
 });
+
+export const INCOMPATABILITIES = {};
+
+const incompatable = (a, ...rest) => {
+    if (!INCOMPATABILITIES[a]) {
+        INCOMPATABILITIES[a] = [];
+    }
+    if (!SHIP_MODS.some(mod => mod.id === a)) {
+        throw `Missing ${a}`;
+    }
+    for (let i = 0; i < rest.length; i++) {
+        const b = rest[i];
+        if (!SHIP_MODS.some(mod => mod.id === b)) {
+            throw `Missing ${b}`;
+        }
+        if (!INCOMPATABILITIES[b]) {
+            INCOMPATABILITIES[b] = [];
+        }
+        INCOMPATABILITIES[a].push(b);
+        INCOMPATABILITIES[b].push(a);
+    }
+}
+incompatable('expanded_modulebay', 'expanded_hardpoints');
+incompatable('expanded_modulebay', 'expanded_cargohold');
+incompatable('expanded_hardpoints', 'expanded_cargohold');
+
+incompatable('missile_optimize', 'missile_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
+incompatable('turret_optimize', 'turret_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
+incompatable('laser_optimize', 'laser_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
+incompatable('cannon_optimize', 'cannon_attenuate', 'kinetic_dmg', 'thermal_dmg', 'gravitic_dmg', 'em_dmg');
+
+incompatable('sensor_optimize', 'beacon_range', 'sensor_overclock', 'sensor_bulwark');
+incompatable('shield_optimize', 'shield_augment', 'shield_recharge', 'shield_redundancy', 'shield_res_gravitic', 'shield_res_kinetic', 'shield_res_em');
+incompatable('shipsim_optimize', 'shipsim_overclock', 'shipsim_bulwark');
+incompatable('capacitor_optimize', 'capacitor_overclock', 'capacitor_bulwark');
+incompatable('engine_optimize', 'max_speed', 'engine_overclock', 'engine_bulwark');
