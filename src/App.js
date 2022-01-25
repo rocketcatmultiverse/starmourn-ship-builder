@@ -70,7 +70,7 @@ const SuperstructureSelection = ({ ssType, setSsType, selected, setSelected }) =
 	return (
 		<div className="superstructures">
 			<Label text="Class" />
-			<select className="superstructures__class" defaultValue={ssType} onChange={(evt) => setSsType(evt.target.value) || setSelected(SHIP_DEFAULT[evt.target.value])} >
+			<select className="superstructures__class" defaultValue={ssType} onChange={(evt) => setSsType(evt.target.value)} >
 				<option value="Interceptor">Interceptor</option>
 				<option value="Corvette">Corvette</option>
 				<option value="Destroyer">Destroyer</option>
@@ -321,17 +321,158 @@ const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim, senso
 	</div>);
 };
 
+const ShipBuilder = ({ superstructure, capacitor, engine, shield, shipsim, sensor, weapons, modules, mods }) => {
+	const cap = getComponent(superstructure, CAPACITORS, capacitor && capacitor.id, []);
+	const eng = getComponent(superstructure, ENGINES, engine && engine.id, []);
+	const shd = getComponent(superstructure, SHIELDS, shield && shield.id, []);
+	const sim = getComponent(superstructure, SHIPSIMS, shipsim && shipsim.id, []);
+	const sen = getComponent(superstructure, SENSORS, sensor && sensor.id, []);
+	let buildString = `SF MODEL ${superstructure}\n`;
+	buildString = buildString + `SF INSTALL CAPACITOR ${cap.id}\n`;
+	buildString = buildString + `SF INSTALL ENGINE ${eng.id}\n`;
+	buildString = buildString + `SF INSTALL SHIELD ${shd.id}\n`;
+	buildString = buildString + `SF INSTALL SHIPSIM ${sim.id}\n`;
+	buildString = buildString + `SF INSTALL SENSOR ${sen.id}\n`;
+	{
+		modules.forEach(({ id }) => {
+			buildString = buildString + `SF INSTALL MODULE ${id}\n`;
+		})
+	}
+	{
+		weapons.forEach(({ id }) => {
+			buildString = buildString + `SF INSTALL MODULE ${id}\n`;
+		})
+	};
+	const modString = mods.map(({ id, level }) => `MOD INSTALL ${id} INTO SHIP AT LEVEL ${level}`).join('\n');
+	return (<div id="builder">
+		<div id="builder_base" className="builder">{buildString}</div>
+		<div id="builder_mods" className="builder">{modString}</div>
+	</div>);
+};
+
+const getDefaultState = () => {
+	if (window.location.search) {
+		try {
+			const input = decodeURI(window.location.search.substring(1));
+			const base = JSON.parse(input);
+			return expand(base);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+	return {
+		ssType: 'Interceptor',
+		superstructure: '20',
+		capacitor: null,
+		engine: null,
+		shield: null,
+		shipsim: null,
+		sensor: null,
+		modules: [],
+		weapons: [],
+		mods: [],
+	};
+};
+
+const expand = ({
+	t,
+	ss,
+	cap,
+	eng,
+	shd,
+	sim,
+	sen,
+	mdl,
+	wep,
+	mod,
+}) => ({
+	ssType: t,
+	superstructure: ss,
+	capacitor: cap,
+	engine: eng,
+	shield: shd,
+	shipsim: sim,
+	sensor: sen,
+	modules: mdl.map((id) => ({ id, disabled: false, ammo: 'kinetic' })),
+	weapons: wep.map(([id, disabled, ammo]) => ({ id, disabled, ammo })),
+	mods: mod.map(([id, level]) => ({ id, level })),
+});
+
+const simplify = ({
+	ssType,
+	superstructure,
+	capacitor,
+	engine,
+	shield,
+	shipsim,
+	sensor,
+	modules,
+	weapons,
+	mods,
+}) => ({
+	t: ssType,
+	ss: superstructure,
+	cap: capacitor,
+	eng: engine,
+	shd: shield,
+	sim: shipsim,
+	sen: sensor,
+	mdl: modules.map(({ id }) => id),
+	wep: weapons.map(({ id, disabled, ammo }) => [id, disabled, ammo]),
+	mod: mods.map(({ id, level }) => [id, level]),
+});
+
 function App() {
-	const [ssType, setSsType] = useState('Interceptor');
-	const [superstructure, setSuperstructure] = useState('20');
-	const [capacitor, setCapacitor] = useState();
-	const [engine, setEngine] = useState();
-	const [shield, setShield] = useState();
-	const [shipsim, setShipsim] = useState();
-	const [sensor, setSensor] = useState();
-	const [modules, setModules] = useState([]);
-	const [weapons, setWeapons] = useState([]);
-	const [mods, setMods] = useState([]);
+	const [settings, baseSetSettings] = useState(getDefaultState());
+	const setSettings = (newSettings) => {
+		window.history.replaceState(null, '', 'starmourn-ship-builder?' + JSON.stringify(simplify(newSettings)));
+		baseSetSettings(newSettings);
+	};
+	const setSsType = (ssType) => (setSettings({
+		...settings,
+		ssType,
+		superstructure: SHIP_DEFAULT[ssType],
+	}));
+	const setSuperstructure = (superstructure) => (setSettings({
+		...settings,
+		superstructure,
+	}));
+	const setCapacitor = (capacitor) => (setSettings({
+		...settings,
+		capacitor,
+	}));
+	const setEngine = (engine) => (setSettings({
+		...settings,
+		engine,
+	}));
+	const setShield = (shield) => (setSettings({
+		...settings,
+		shield,
+	}));
+	const setShipsim = (shipsim) => (setSettings({
+		...settings,
+		shipsim,
+	}));
+	const setSensor = (sensor) => (setSettings({
+		...settings,
+		sensor,
+	}));
+	const setModules = (modules) => (setSettings({
+		...settings,
+		modules,
+	}));
+	const setWeapons = (weapons) => (setSettings({
+		...settings,
+		weapons,
+	}));
+	const setMods = (mods) => (setSettings({
+		...settings,
+		mods,
+	}));
+	console.log(settings);
+	const {
+		ssType, superstructure, capacitor, engine, shield, shipsim, sensor, modules, weapons, mods,
+	} = settings;
 	const modsWithLevels = getMods(mods);
 	const ship = {
 		superstructure,
@@ -356,6 +497,7 @@ function App() {
 			<ModulesSelection selected={weapons} setSelected={setWeapons} superstructure={superstructure} masterList={WEAPONS} name="weapons" mods={modsWithLevels} />
 			<ModsSelection selected={mods} setSelected={setMods} masterList={SHIP_MODS} />
 			<ShipDisplay {...ship} />
+			<ShipBuilder {...ship} />
 		</div>
 	);
 }

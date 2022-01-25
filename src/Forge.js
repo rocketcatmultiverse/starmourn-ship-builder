@@ -102,6 +102,6 @@ export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, s
 		overModules: modulePoints > superstructure.modules.points,
 		overWeapons: weaponPoints > superstructure.weapons.points,
 		overModded: getModPointsUsed(mods) > 60,
-		modCosts: getModCosts(mods),
+		modCosts: getModCosts(superstructure.ss_type, mods),
 	};
 };

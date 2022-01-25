@@ -244,15 +244,25 @@ export const modify = (baseComponent, masterList, modsWithLevels) => {
 };
 
 export const MOD_PART_TYPES = ['Nanotube', 'Superalloy', 'Aerogel', 'Metamaterial', 'Amorphite'];
+export const SUPERSTRUCTURE_MULTIPLIERS = {
+    Interceptor: 1,
+    Corvette: 1.25,
+    Destroyer: 1.5,
+    Cruiser: 1.75,
+    Battleship: 2,
+    Frieghter: 1.6,
+    Superhauler: 1.8,
+};
 
-export const getModCosts = (modsWithLevels) => {
+export const getModCosts = (superstructureType, modsWithLevels) => {
+    const superstructureModify = SUPERSTRUCTURE_MULTIPLIERS[superstructureType];
     return modsWithLevels
         .reduce((costs, modWithLevel) => {
             const parts = modWithLevel.mod.parts[modWithLevel.level - 1];
             const partTypes = Object.keys(parts);
             for (let i = 0; i < partTypes.length; i++) {
                 const partType = partTypes[i];
-                costs[partType] += parts[partType];
+                costs[partType] += Math.ceil(parts[partType] * superstructureModify);
             }
             return costs;
         },

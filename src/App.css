@@ -7,6 +7,22 @@ body {
     grid-gap: 8px;
 }
 
+#builder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.builder {
+    width: 20em;
+    height: 8em;
+    background-color: white;
+    color: black;
+    white-space: pre;
+    overflow-y: scroll;
+    user-select: all;
+}
+
 select, option {
     background-color: #3d3d3d;
     color: #edab04;
