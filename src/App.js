@@ -322,11 +322,11 @@ const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim, senso
 };
 
 const ShipBuilder = ({ superstructure, capacitor, engine, shield, shipsim, sensor, weapons, modules, mods }) => {
-	const cap = getComponent(superstructure, CAPACITORS, capacitor && capacitor.id, []);
-	const eng = getComponent(superstructure, ENGINES, engine && engine.id, []);
-	const shd = getComponent(superstructure, SHIELDS, shield && shield.id, []);
-	const sim = getComponent(superstructure, SHIPSIMS, shipsim && shipsim.id, []);
-	const sen = getComponent(superstructure, SENSORS, sensor && sensor.id, []);
+	const cap = getComponent(superstructure, CAPACITORS, capacitor, []);
+	const eng = getComponent(superstructure, ENGINES, engine, []);
+	const shd = getComponent(superstructure, SHIELDS, shield, []);
+	const sim = getComponent(superstructure, SHIPSIMS, shipsim, []);
+	const sen = getComponent(superstructure, SENSORS, sensor, []);
 	let buildString = `SF MODEL ${superstructure}\n`;
 	buildString = buildString + `SF INSTALL CAPACITOR ${cap.id}\n`;
 	buildString = buildString + `SF INSTALL ENGINE ${eng.id}\n`;
