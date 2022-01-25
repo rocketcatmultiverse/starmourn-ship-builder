@@ -425,7 +425,7 @@ const simplify = ({
 function App() {
 	const [settings, baseSetSettings] = useState(getDefaultState());
 	const setSettings = (newSettings) => {
-		window.history.replaceState(null, '', 'starmourn-ship-builder?' + JSON.stringify(simplify(newSettings)));
+		window.history.replaceState(null, '', '?' + JSON.stringify(simplify(newSettings)));
 		baseSetSettings(newSettings);
 	};
 	const setSsType = (ssType) => (setSettings({
