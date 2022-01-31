@@ -1398,6 +1398,18 @@ export const MODULES = [{
     'cycles': 0,
     'price': 25000,
 },
+{
+    'id': '68',
+    'name': 'Material Scanner',
+    'size': 'Small',
+    'effect': 'Scan for materials',
+    'size_points': 5,
+    'description': 'Scan for nearby gas clouds or mineable asteroids (SHIP MATERIALSCAN <ASTEROID|GAS>, SHIP TRIGGER <module> <ASTEROID|GAS>)',
+    'mass': 0,
+    'power': 200,
+    'cycles': 100,
+    'price': 200,
+},
 ];
 
 export const CAPACITORS = [
