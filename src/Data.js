@@ -26,6 +26,32 @@ export const SUPERSTRUCTURES = [
         "price": 17527
     },
     {
+        "id": "45",
+        "make": "Wayland Astrotech",
+        "model": "Prospector",
+        "ss_type": "Interceptor",
+        "size": 13,
+        "mass": 2870,
+        "strength": 950,
+        "turn_time": 0.85,
+        "power": 3300,
+        "capacity": 6520,
+        "refit_capacity": 3,
+        "weapons": {
+            "small": 0,
+            "medium": 0,
+            "large": 0,
+            "points": 0
+        },
+        "modules": {
+            "small": 0,
+            "medium": 0,
+            "large": 0,
+            "points": 20
+        },
+        "price": 19999
+    },
+    {
         "id": "21",
         "make": "Kurovani Defense",
         "model": "Assassin",
