@@ -51,11 +51,30 @@ export const getPointsUsed = (selected, masterList) =>
 export const getModPointsUsed = (selected) =>
 	selected.reduce((acc, { level }) => acc + level, 0);
 
+const ammoMultiplier = (hullOrShield, ammo) => {
+	if (ammo === 'kinetic') {
+		return 0.5;
+	} else if (ammo === 'thermal' && hullOrShield === 'hull') {
+		return 1.0;
+	} else if (ammo === 'em' && hullOrShield === 'shield') {
+		return 1.0;
+	} else if (ammo === 'gravitic') {
+		if (hullOrShield === 'hull') {
+			return 0.67;
+		}
+		return 0.33;
+	}
+	return 0.0;
+};
+
 const isEnabled = ({ disabled }) => !disabled;
 const sumPower = (acc, weapon) => acc + weapon.power;
 const sumCycles = (acc, weapon) => acc + weapon.cycles;
 const sumPrice = (acc, item) => acc + item.price;
-const sumDps = (acc, item) => acc + (item.weapon_damage / (item.firing_speed || 1.0));
+const sumDps = ({ hullDamage, shieldDamage }, item) => ({
+	hullDamage: hullDamage + (item.weapon_damage / (item.firing_speed || 1.0)) * ammoMultiplier('hull', item.ammo),
+	shieldDamage: shieldDamage + (item.weapon_damage / (item.firing_speed || 1.0)) * ammoMultiplier('shield', item.ammo),
+});
 
 export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, shipsim, weapons, modules, weaponPoints, modulePoints, mods }) => {
 	const massUsed = superstructure.mass + capacitor.mass + shield.mass + sensor.mass + engine.mass + shipsim.mass;
@@ -68,7 +87,12 @@ export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, s
 	const maxPower = superstructure.power;
 	const weaponPower = weaponsEnabled.reduce(sumPower, 0);
 	const modulePower = modulesEnabled.reduce(sumPower, 0);
-	const dps = weaponsEnabled.reduce(sumDps, 0);
+	const dps = weaponsEnabled.reduce(sumDps, { hullDamage: 0, shieldDamage: 0 });
+
+	const health = {
+		hull: superstructure.strength,
+		shield: shield.strength,
+	};
 
 	const powerUsed = capacitor.power + shield.power + sensor.power + engine.power + shipsim.power + weaponPower + modulePower;
 	const powerLeft = maxPower - powerUsed;
@@ -93,6 +117,7 @@ export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, s
 		massUsed,
 		maxPower,
 		powerLeft,
+		health,
 		dps,
 		thrustRatio,
 		turnSpeed: `${superstructure.turn_time.toFixed(2)}s`,

@@ -69,6 +69,7 @@ select, option {
 .thrust,
 .turn_speed,
 .dps,
+.health,
 .price,
 .mod_costs {
     color: #edab04;
@@ -111,9 +112,75 @@ select, option {
     height: 32px;
 }
 
+.ammo {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1px solid white;
+    border-radius: 4px;
+}
+.ammo_kinetic {
+    background-color: #ae00ff;
+}
+.ammo_em {
+    background-color: #503cff;
+}
+.ammo_thermal {
+    background-color: #bd2b2b;
+}
+.ammo_gravitic {
+    background-color: #d0ff00;
+}
+
+.health_shield,
+.dps_shield {
+    color: #2222ff;
+}
+
+.health_hull,
+.dps_hull {
+    color: #22ff22;
+}
+
 .ship {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-areas: "power dps mass" "cycles health thrust" "price x turn_speed" "over_modules over_modules over_modules" "over_weapons over_weapons over_weapons" "over_modded over_modded over_modded" "mod_costs mod_costs mod_costs";
+}
+.power {
+    grid-area: power;
+}
+.cycles {
+    grid-area: cycles;
+}
+.mass {
+    grid-area: mass;
+}
+.dps {
+    grid-area: dps;
+}
+.price {
+    grid-area: price;
+}
+.thrust {
+    grid-area: thrust;
+}
+.health {
+    grid-area: health;
+}
+.turn_speed {
+    grid-area: turn_speed;
+}
+.over_modules {
+    grid-area: over_modules;
+}
+.over_weapons {
+    grid-area: over_weapons;
+}
+.over_modded {
+    grid-area: over_modded;
+}
+.mod_costs {
+    grid-area: mod_costs;
 }
 
 .mod_costs {
