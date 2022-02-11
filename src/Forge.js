@@ -75,6 +75,10 @@ const sumDps = ({ hullDamage, shieldDamage }, item) => ({
 	hullDamage: hullDamage + (item.weapon_damage / (item.firing_speed || 1.0)) * ammoMultiplier('hull', item.ammo),
 	shieldDamage: shieldDamage + (item.weapon_damage / (item.firing_speed || 1.0)) * ammoMultiplier('shield', item.ammo),
 });
+const sumAlphaStrike = ({ hullDamage, shieldDamage }, item) => ({
+	hullDamage: hullDamage + item.weapon_damage * ammoMultiplier('hull', item.ammo),
+	shieldDamage: shieldDamage + item.weapon_damage * ammoMultiplier('shield', item.ammo),
+});
 
 export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, shipsim, weapons, modules, weaponPoints, modulePoints, mods }) => {
 	const massUsed = superstructure.mass + capacitor.mass + shield.mass + sensor.mass + engine.mass + shipsim.mass;
@@ -87,6 +91,7 @@ export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, s
 	const maxPower = superstructure.power;
 	const weaponPower = weaponsEnabled.reduce(sumPower, 0);
 	const modulePower = modulesEnabled.reduce(sumPower, 0);
+	const alphaStrike = weaponsEnabled.reduce(sumAlphaStrike, { hullDamage: 0, shieldDamage: 0 });
 	const dps = weaponsEnabled.reduce(sumDps, { hullDamage: 0, shieldDamage: 0 });
 
 	const health = {
@@ -118,6 +123,7 @@ export const shipStats = ({ superstructure, capacitor, shield, sensor, engine, s
 		maxPower,
 		powerLeft,
 		health,
+		alphaStrike,
 		dps,
 		thrustRatio,
 		turnSpeed: `${superstructure.turn_time.toFixed(2)}s`,

@@ -18,11 +18,12 @@ export const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim
         weaponPoints: getPointsUsed(weapons, WEAPONS),
         modulePoints: getPointsUsed(modules, MODULES),
     };
-    const { maxPower, massUsed, powerLeft, thrustRatio, cyclesLeft, maxCycles, health, dps, totalPrice, overModules, overWeapons, overModded, turnSpeed, modCosts } = shipStats(ship);
+    const { maxPower, massUsed, powerLeft, thrustRatio, cyclesLeft, maxCycles, health, alphaStrike, dps, totalPrice, overModules, overWeapons, overModded, turnSpeed, modCosts } = shipStats(ship);
     return (<div className="ship">
         <span className="power">Power: <span className="power_left">{powerLeft}</span>/<span className="max_power">{maxPower}</span></span>
         <span className="cycles">Cycles: <span className="cycles_left">{cyclesLeft}</span>/<span className="max_cycles">{maxCycles}</span></span>
         <span className="health">Health: {health.shield + health.hull} (<span className="health_shield">{health.shield}</span>+<span className="health_hull">{health.hull}</span>)</span>
+        <span className="alpha_strike">Alpha Strike: {alphaStrike.shieldDamage + alphaStrike.hullDamage} (<span className="alpha_strike_shield">{alphaStrike.shieldDamage}</span> - <span className="alpha_strike_hull">{alphaStrike.hullDamage}</span>)</span>
         <span className="dps">DPS: {(dps.shieldDamage + dps.hullDamage).toFixed(2)} (<span className="dps_shield">{dps.shieldDamage.toFixed(2)}</span> - <span className="dps_hull">{dps.hullDamage.toFixed(2)}</span>)</span>
         <span className="mass">Mass: <span className="mass_used">{massUsed}</span></span>
         <span className="thrust">Thrust Over Mass: <span className="thrust_ratio">{thrustRatio.toFixed(3)}</span></span>

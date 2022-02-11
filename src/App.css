@@ -68,6 +68,7 @@ select, option {
 .mass,
 .thrust,
 .turn_speed,
+.alpha_strike,
 .dps,
 .health,
 .price,
@@ -133,18 +134,20 @@ select, option {
 }
 
 .health_shield,
-.dps_shield {
+.dps_shield,
+.alpha_strike_shield {
     color: #2222ff;
 }
 
 .health_hull,
-.dps_hull {
+.dps_hull,
+.alpha_strike_hull {
     color: #22ff22;
 }
 
 .ship {
     display: grid;
-    grid-template-areas: "power dps mass" "cycles health thrust" "price x turn_speed" "over_modules over_modules over_modules" "over_weapons over_weapons over_weapons" "over_modded over_modded over_modded" "mod_costs mod_costs mod_costs";
+    grid-template-areas: "power alpha_strike mass" "cycles dps thrust" "price health turn_speed" "over_modules over_modules over_modules" "over_weapons over_weapons over_weapons" "over_modded over_modded over_modded" "mod_costs mod_costs mod_costs";
 }
 .power {
     grid-area: power;
@@ -154,6 +157,9 @@ select, option {
 }
 .mass {
     grid-area: mass;
+}
+.alpha_strike {
+    grid-area: alpha_strike;
 }
 .dps {
     grid-area: dps;
