@@ -20,8 +20,8 @@ export const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim
     };
     const { maxPower, massUsed, powerLeft, thrustRatio, cyclesLeft, maxCycles, health, alphaStrike, dps, totalPrice, overModules, overWeapons, overModded, turnSpeed, modCosts } = shipStats(ship);
     return (<div className="ship">
-        <span className="power">Power: <span className="power_left">{powerLeft}</span>/<span className="max_power">{maxPower}</span></span>
-        <span className="cycles">Cycles: <span className="cycles_left">{cyclesLeft}</span>/<span className="max_cycles">{maxCycles}</span></span>
+        <span className={`power power--${powerLeft >= 0 ? 'under' : 'over'}`}>Power: <span className="power_left">{powerLeft}</span>/<span className="max_power">{maxPower}</span></span>
+        <span className={`cycles cycles--${cyclesLeft >= 0 ? 'under' : 'over'}`}>Cycles: <span className="cycles_left">{cyclesLeft}</span>/<span className="max_cycles">{maxCycles}</span></span>
         <span className="health">Health: {health.shield + health.hull} (<span className="health_shield">{health.shield}</span>+<span className="health_hull">{health.hull}</span>)</span>
         <span className="alpha_strike">Alpha Strike: {alphaStrike.shieldDamage + alphaStrike.hullDamage} (<span className="alpha_strike_shield">{alphaStrike.shieldDamage}</span> - <span className="alpha_strike_hull">{alphaStrike.hullDamage}</span>)</span>
         <span className="dps">DPS: {(dps.shieldDamage + dps.hullDamage).toFixed(2)} (<span className="dps_shield">{dps.shieldDamage.toFixed(2)}</span> - <span className="dps_hull">{dps.hullDamage.toFixed(2)}</span>)</span>
@@ -36,5 +36,5 @@ export const ShipDisplay = ({ superstructure, capacitor, engine, shield, shipsim
             {MOD_PART_TYPES.map(partType => <div className="mod_costs_header">{partType}</div>)}
             {MOD_PART_TYPES.map(partType => <div className="mod_cost">{modCosts[partType]}</div>)}
         </div>
-    </div>);
+    </div >);
 };

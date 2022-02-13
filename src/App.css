@@ -79,7 +79,9 @@ select, option {
 }
 .over_modules,
 .over_weapons,
-.over_modded {
+.over_modded,
+.power--over > .power_left,
+.cycles--over > .cycles_left {
     color: #f20c3d;
 }
 
