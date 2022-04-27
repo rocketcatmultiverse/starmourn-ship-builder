@@ -905,6 +905,25 @@ export const WEAPONS = [
         'price': 20000,
     },
     {
+        'id': '86',
+        'name': 'Cargo Scanner',
+        'size': 'Small',
+        'size_points': 5,
+        'description': 'Scan a target ship\'s cargohold',
+        'weapon_type': 'cargoscanner',
+        'firing_speed': 7.5,
+        'reload_speed': 0,
+        'weapon_damage': 0,
+        'optimal_range': 40,
+        'fall_off': 0,
+        'mass': 0,
+        'power': 300,
+        'cycles': 700,
+        'capacitor': 300,
+        'price': 4999,
+
+    },
+    {
         'id': '84',
         'name': 'Signal Jammer',
         'size': 'Medium',
@@ -923,7 +942,7 @@ export const WEAPONS = [
         'price': 12999,
     },
     {
-        'id': '72',
+        'id': '77',
         'name': 'Slicekit',
         'size': 'Small',
         'size_points': 5,
@@ -1339,6 +1358,18 @@ export const WEAPONS = [
 ];
 
 export const MODULES = [
+    {
+        'id': '85',
+        'name': 'Cap Scrambler',
+        'size': 'Small',
+        'effect': '-10% chance hostile cargoscan succeed',
+        'size_points': 5,
+        'description': 'Interfere with hostile attempts to scan your cargo',
+        'mass': 0,
+        'power': 500,
+        'cycles': 600,
+        'price': 5000,
+    },
     {
         'id': '75',
         'name': 'Cap Hardener',
@@ -1829,7 +1860,68 @@ export const CAPACITORS = [
         "kear": 19000,
         "power": 5700,
         "price": 19923
+    },
+    {
+        "id": "22",
+        "make": "Serenity Forgeworks",
+        "model": "Drehft v. 1.0",
+        "ss_type": "Cruiser",
+        "mass": 5250,
+        "kear": 15500,
+        "power": 4400,
+        "price": 60257
+    },
+    {
+        "id": "23",
+        "make": "Vertix Luxury Systems",
+        "model": "Fuzz-9k",
+        "ss_type": "Cruiser",
+        "mass": 5250,
+        "kear": 16000,
+        "power": 4500,
+        "price": 75295
+    },
+    {
+        "id": "27",
+        "make": "Coreward Group",
+        "model": "LRG57-SH",
+        "ss_type": "Superhauler",
+        "mass": 7500,
+        "kear": 5700,
+        "power": 3500,
+        "price": 9182
+    },
+    {
+        "id": "28",
+        "make": "Thill Conglomerate",
+        "model": "Alpha 7000",
+        "ss_type": "Superhauler",
+        "mass": 7000,
+        "kear": 5900,
+        "power": 3900,
+        "price": 9369
+    },
+    {
+        "id": "29",
+        "make": "Warpring Enterprises",
+        "model": "Enercell C",
+        "ss_type": "Freighter",
+        "mass": 1900,
+        "kear": 4000,
+        "power": 1600,
+        "price": 5786
+    },
+    {
+        "id": "30",
+        "make": "Thill Conglomerate",
+        "model": "Delta 2200",
+        "ss_type": "Freighter",
+        "mass": 2000,
+        "kear": 4500,
+        "power": 1200,
+        "price": 4257
     }
+
 ];
 
 export const SHIPSIMS = [
@@ -2022,7 +2114,48 @@ export const SHIPSIMS = [
         "cycles": 28500,
         "power": 10000,
         "price": 81225
-    }
+    },
+    {
+        "id": "22",
+        "make": "Bor Rai Cognition",
+        "model": "BRC11k",
+        "ss_type": "Superhauler",
+        "mass": 6300,
+        "cycles": 11000,
+        "power": 8000,
+        "price": 25452
+    },
+    {
+        "id": "25",
+        "make": "Bor Rai Cognition",
+        "model": "BRF12k",
+        "ss_type": "Freighter",
+        "mass": 1500,
+        "cycles": 2500,
+        "power": 2750,
+        "price": 1358
+    },
+    {
+        "id": "26",
+        "make": "Nyaza Char'nae",
+        "model": "NCN2750",
+        "ss_type": "Freighter",
+        "mass": 1750,
+        "cycles": 2750,
+        "power": 1671,
+        "price": 1358
+    },
+    {
+        "id": "27",
+        "make": "Aphador Cooperative",
+        "model": "MPL-S",
+        "ss_type": "Superhauler",
+        "mass": 6500,
+        "cycles": 15000,
+        "power": 9800,
+        "price": 34385
+    },
+
 ];
 
 export const SENSORS = [
@@ -2032,7 +2165,8 @@ export const SENSORS = [
         "model": "Core15",
         "ss_type": "Interceptor",
         "mass": 125,
-        "strength": 12,
+        "strength": 1228,
+        "jamming": 1560,
         "power": 600,
         "price": 1837
     },
@@ -2042,7 +2176,8 @@ export const SENSORS = [
         "model": "SG1",
         "ss_type": "Interceptor",
         "mass": 150,
-        "strength": 18,
+        "strength": 1823,
+        "jamming": 1354,
         "power": 750,
         "price": 2957
     },
@@ -2052,7 +2187,8 @@ export const SENSORS = [
         "model": "45Q-D3",
         "ss_type": "Corvette",
         "mass": 500,
-        "strength": 13,
+        "strength": 1335,
+        "jamming": 2355,
         "power": 2600,
         "price": 3824
     },
@@ -2062,7 +2198,8 @@ export const SENSORS = [
         "model": "SG3",
         "ss_type": "Corvette",
         "mass": 600,
-        "strength": 21,
+        "strength": 2189,
+        "jamming": 1235,
         "power": 2900,
         "price": 7019
     },
@@ -2072,7 +2209,8 @@ export const SENSORS = [
         "model": "Core300",
         "ss_type": "Freighter",
         "mass": 600,
-        "strength": 10,
+        "strength": 1012,
+        "jamming": 982,
         "power": 3000,
         "price": 3286
     },
@@ -2082,7 +2220,8 @@ export const SENSORS = [
         "model": "APH55",
         "ss_type": "Destroyer",
         "mass": 1150,
-        "strength": 22,
+        "strength": 2253,
+        "jamming": 1098,
         "power": 5500,
         "price": 10234
     },
@@ -2092,7 +2231,8 @@ export const SENSORS = [
         "model": "Core85",
         "ss_type": "Destroyer",
         "mass": 900,
-        "strength": 14,
+        "strength": 1423,
+        "jamming": 2264,
         "power": 5000,
         "price": 5345
     },
@@ -2102,7 +2242,8 @@ export const SENSORS = [
         "model": "55Q-I3",
         "ss_type": "Cruiser",
         "mass": 1750,
-        "strength": 16,
+        "strength": 1690,
+        "jamming": 1209,
         "power": 7600,
         "price": 9635
     },
@@ -2112,7 +2253,8 @@ export const SENSORS = [
         "model": "SG6",
         "ss_type": "Cruiser",
         "mass": 1950,
-        "strength": 22,
+        "strength": 2223,
+        "jamming": 2642,
         "power": 8200,
         "price": 14212
     },
@@ -2122,7 +2264,8 @@ export const SENSORS = [
         "model": "Revealer",
         "ss_type": "Superhauler",
         "mass": 3000,
-        "strength": 10,
+        "strength": 1033,
+        "jamming": 857,
         "power": 7400,
         "price": 10462
     },
@@ -2132,7 +2275,8 @@ export const SENSORS = [
         "model": "APH750",
         "ss_type": "Superhauler",
         "mass": 3500,
-        "strength": 14,
+        "strength": 1477,
+        "jamming": 1032,
         "power": 7800,
         "price": 16644
     },
@@ -2142,7 +2286,8 @@ export const SENSORS = [
         "model": "Voidfinder",
         "ss_type": "Battleship",
         "mass": 3000,
-        "strength": 16,
+        "strength": 1635,
+        "jamming": 2320,
         "power": 11000,
         "price": 13729
     },
@@ -2152,9 +2297,98 @@ export const SENSORS = [
         "model": "SG10",
         "ss_type": "Battleship",
         "mass": 3600,
-        "strength": 22,
+        "strength": 2287,
+        "jamming": 2012,
         "power": 11750,
         "price": 21919
+    },
+    {
+        "id": "18",
+        "make": "Coreward Group",
+        "model": "Core20",
+        "ss_type": "Interceptor",
+        "mass": 150,
+        "strength": 1510,
+        "jamming": 2832,
+        "power": 700,
+        "price": 2837
+    },
+    {
+        "id": "19",
+        "make": "Artekeera Detection",
+        "model": "SD2",
+        "ss_type": "Corvette",
+        "mass": 575,
+        "strength": 1708,
+        "jamming": 2323,
+        "power": 2700,
+        "price": 4530
+    },
+    {
+        "id": "20",
+        "make": "Aphador Cooperative",
+        "model": "APC20",
+        "ss_type": "Destroyer",
+        "mass": 1000,
+        "strength": 2054,
+        "jamming": 1235,
+        "power": 5000,
+        "price": 7589
+    },
+    {
+        "id": "21",
+        "make": "Artekeera Detection",
+        "model": "SD10",
+        "ss_type": "Cruiser",
+        "mass": 1850,
+        "strength": 1901,
+        "jamming": 1273,
+        "power": 7900,
+        "price": 12352
+    },
+    {
+        "id": "22",
+        "make": "Coreward Group",
+        "model": "Core11",
+        "ss_type": "Freighter",
+        "mass": 700,
+        "strength": 1154,
+        "jamming": 745,
+        "power": 3300,
+        "price": 3586
+    },
+    {
+        "id": "23",
+        "make": "Ixodon Industries",
+        "model": "Pathfinder",
+        "ss_type": "Freighter",
+        "mass": 800,
+        "strength": 1234,
+        "jamming": 989,
+        "power": 3600,
+        "price": 4032
+    },
+    {
+        "id": "24",
+        "make": "Coreward Group",
+        "model": "Core12",
+        "ss_type": "Superhauler",
+        "mass": 3300,
+        "strength": 1289,
+        "jamming": 1235,
+        "power": 7600,
+        "price": 15745
+    },
+    {
+        "id": "25",
+        "make": "Ixodon Industries",
+        "model": "Envision",
+        "ss_type": "Battleship",
+        "mass": 3200,
+        "strength": 1923,
+        "jamming": 1909,
+        "power": 11500,
+        "price": 17531
     }
 ];
 
@@ -2594,7 +2828,7 @@ export const SHIELDS = [
         "price": 816,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2610,7 +2844,7 @@ export const SHIELDS = [
         "price": 987,
         "resistances": {
             "kinetic": -0.1,
-            "thermal": 0.1,
+            "gravitic": 0.1,
             "EM": 0
         }
     },
@@ -2626,7 +2860,7 @@ export const SHIELDS = [
         "price": 1104,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2642,7 +2876,7 @@ export const SHIELDS = [
         "price": 1201,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2658,7 +2892,7 @@ export const SHIELDS = [
         "price": 1329,
         "resistances": {
             "kinetic": -0.1,
-            "thermal": 0.1,
+            "gravitic": 0.1,
             "EM": 0
         }
     },
@@ -2674,7 +2908,7 @@ export const SHIELDS = [
         "price": 1559,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0.1
         }
     },
@@ -2690,7 +2924,7 @@ export const SHIELDS = [
         "price": 6595,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2706,7 +2940,7 @@ export const SHIELDS = [
         "price": 8451,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2722,7 +2956,7 @@ export const SHIELDS = [
         "price": 2112,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2738,7 +2972,7 @@ export const SHIELDS = [
         "price": 2683,
         "resistances": {
             "kinetic": -0.15,
-            "thermal": -0.15,
+            "gravitic": -0.15,
             "EM": 0
         }
     },
@@ -2754,7 +2988,7 @@ export const SHIELDS = [
         "price": 3464,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2770,7 +3004,7 @@ export const SHIELDS = [
         "price": 3969,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2786,7 +3020,7 @@ export const SHIELDS = [
         "price": 13953,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2802,7 +3036,7 @@ export const SHIELDS = [
         "price": 15614,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2818,7 +3052,7 @@ export const SHIELDS = [
         "price": 15614,
         "resistances": {
             "kinetic": -0.1,
-            "thermal": 0.1,
+            "gravitic": 0.1,
             "EM": 0
         }
     },
@@ -2834,7 +3068,7 @@ export const SHIELDS = [
         "price": 18561,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2850,7 +3084,7 @@ export const SHIELDS = [
         "price": 39291,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2866,7 +3100,7 @@ export const SHIELDS = [
         "price": 46169,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2882,7 +3116,7 @@ export const SHIELDS = [
         "price": 68839,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0
         }
     },
@@ -2898,7 +3132,7 @@ export const SHIELDS = [
         "price": 70663,
         "resistances": {
             "kinetic": -0.15,
-            "thermal": 0.15,
+            "gravitic": 0.15,
             "EM": 0
         }
     },
@@ -2914,8 +3148,56 @@ export const SHIELDS = [
         "price": 78888,
         "resistances": {
             "kinetic": 0,
-            "thermal": 0,
+            "gravitic": 0,
             "EM": 0.1
+        }
+    },
+    {
+        "id": "27",
+        "make": "Relian Shipyards",
+        "model": "Bastion 700",
+        "ss_type": "Freighter",
+        "mass": 10000,
+        "strength": 7000,
+        "recharge_time": 15,
+        "power": 3000,
+        "price": 10551,
+        "resistances": {
+            "kinetic": 0,
+            "gravitic": 0,
+            "EM": 0.1
+        }
+    },
+    {
+        "id": "28",
+        "make": "Relian Shipyards",
+        "model": "Fortress 21K",
+        "ss_type": "Superhauler",
+        "mass": 10000,
+        "strength": 21000,
+        "recharge_time": 15,
+        "power": 7000,
+        "price": 32218,
+        "resistances": {
+            "kinetic": -0.1,
+            "gravitic": -0.1,
+            "EM": 0.1
+        }
+    },
+    {
+        "id": "29",
+        "make": "Ixodon Industries",
+        "model": "Aegis S",
+        "ss_type": "Superhauler",
+        "mass": 17000,
+        "strength": 28000,
+        "recharge_time": 21,
+        "power": 8000,
+        "price": 42041,
+        "resistances": {
+            "kinetic": 0.1,
+            "gravitic": 0.1,
+            "EM": -0.1
         }
     }
 ];

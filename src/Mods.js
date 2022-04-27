@@ -167,6 +167,7 @@ const modifyOnce = (baseComponent, masterList, modWithLevel) => {
             ...baseComponent,
             // TODO
             strength: percentModify(baseComponent.strength, strength),
+            jamming: percentModify(baseComponent.jamming, jamming),
             power: percentModify(baseComponent.power, powerCost),
         };
     } else if (id === 'shipsim_overclock' && masterList === SHIPSIMS) {
